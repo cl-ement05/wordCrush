@@ -1,4 +1,4 @@
 class Joueur {
-
+    string nom;
     
 }
