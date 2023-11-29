@@ -5,7 +5,7 @@ class Joueur {
 
     public Joueur(string nom) {
         this.nom = nom;
-        this.score = 0;
+        this.score = 1;
         this.motsTrouves = new List<string>();
     }
     
