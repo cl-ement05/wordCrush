@@ -1,21 +1,40 @@
 class Lettre {
-    char letter;
-    int probabilty;
-    int weight;
+    readonly char character;
+    readonly int frequency;
+    readonly int weight;
 
-    public char Letter {
-        get { return this.letter; }
-    }
-    public int Probabilty {
-        get { return this.probabilty; }
-    }
     public int Weight {
         get { return this.weight; }
     }
 
-    public Lettre(char letter, int probabilty, int weight) {
-        this.letter = letter;
-        this.probabilty = probabilty;
+    public Lettre(char character, int frequency, int weight) {
+        this.character = character;
+        this.frequency = frequency;
         this.weight = weight;
+    }
+
+    public static Lettre[]? buildProbabilityTable(Lettre[] lettres) {
+        Lettre[]? table = new Lettre[100];
+        try {
+            int index = 0;
+            foreach(Lettre lettre in lettres) {
+                for (int i = index; i < index + lettre.frequency; i++) {
+                    table[i] = lettre;
+                }
+            }
+        } catch (IndexOutOfRangeException) {
+            Console.WriteLine("Frequency of all letters is different from 100% please double check your file");
+            table = null;
+        }
+        return table;
+    }
+
+    public static Lettre randomLetter(Lettre[] probaTable, Random randomInstance) {
+        int rIndex = randomInstance.Next(0, 101);
+        return probaTable[rIndex];
+    }
+
+    public string toString() {
+        return character.ToString();
     }
 }
