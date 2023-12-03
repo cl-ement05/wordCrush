@@ -1,26 +1,21 @@
 class Lettre {
     char letter;
-    int maxAppearance;
+    int probabilty;
     int weight;
-    int appearance = 0;
 
     public char Letter {
         get { return this.letter; }
     }
-    public int MaxAppereance {
-        get { return this.maxAppearance; }
+    public int Probabilty {
+        get { return this.probabilty; }
     }
     public int Weight {
         get { return this.weight; }
     }
-    public int Appearance {
-        get { return this.appearance; }
-        set { this.appearance = value; }
-    }
 
-    public Lettre(char letter, int maxAppearance, int weight) {
+    public Lettre(char letter, int probabilty, int weight) {
         this.letter = letter;
-        this.maxAppearance = maxAppearance;
+        this.probabilty = probabilty;
         this.weight = weight;
     }
 }
