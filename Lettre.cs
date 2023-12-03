@@ -3,6 +3,10 @@ class Lettre {
     readonly int frequency;
     readonly int weight;
 
+    public char Character {
+        get { return this.character; }
+    }
+    
     public int Weight {
         get { return this.weight; }
     }
@@ -21,6 +25,7 @@ class Lettre {
                 for (int i = index; i < index + lettre.frequency; i++) {
                     table[i] = lettre;
                 }
+                index += lettre.frequency;
             }
         } catch (IndexOutOfRangeException) {
             Console.WriteLine("Frequency of all letters is different from 100% please double check your file");

@@ -11,24 +11,26 @@ class csvInterface {
     /// Parse data from the given filename and using given separator 
     /// </summary>
     /// <returns>Returns parsed data as double array of char</returns>
-    public char[][] parseFromFile() {
+    public string[,] parseFromFile() {
         StreamReader? streamReader = null;
         int counter = 0;
         string? nextLine;
-        char[][] lines = new char[10][]; //dummy value, reading length from file right after this
+        string[,] lines = new string[0,0]; //dummy value, reading length from file right after this
+        List<string> linesList = new List<string>();
         try {
             streamReader = new StreamReader(filename);
-            bool charArrayInit = false;
             while ((nextLine = streamReader.ReadLine()) != null) {
-                string[] broke = nextLine.Split(separator);
-                if (!charArrayInit) {
-                    lines = new char[broke.Length][]; //real length here
-                    charArrayInit = true;
-                }
-                for (int j = 0; j < broke.Length; j++) {
-                    lines[counter][j] = char.Parse(broke[j]);
-                }
+                linesList.Add(nextLine);
                 
+            }
+            int nbrLines = linesList.Count;
+            lines = new string[nbrLines,linesList[0].Split(separator).Length];
+            while (counter < nbrLines) {
+                string[] broke = linesList[counter].Split(separator);
+                for (int i = 0; i < broke.Length; i++) {
+                    lines[counter,i] = broke[i];
+                }
+                counter++;
             }
         } catch (IOException e) {
             Console.WriteLine(e.Message);
