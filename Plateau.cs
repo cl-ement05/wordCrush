@@ -127,33 +127,37 @@ class Plateau {
     }
 
         private List<int[]> searchWordRecursive(string mot, int index, List<int[]> indexPath, int i, int j) {
-        if (mot[index] != tableau[i,j]!.Character) return new List<int[]>();
-        else if (index != mot.Length-1) {
-            List<int[]> newPath = indexPath.Concat(new List<int[]> {new int[2] {i,j}}).ToList();
-            List<int[]> vert = searchWordRecursive(mot, index + 1, newPath, i - 1, j);
-            if (vert.Count != 0) {
-                return vert;
-            }
+        try {
+            if (mot[index] != tableau[i,j]!.Character) return new List<int[]>();
+            else if (index != mot.Length-1) {
+                List<int[]> newPath = indexPath.Concat(new List<int[]> {new int[2] {i,j}}).ToList();
+                List<int[]> vert = searchWordRecursive(mot, index + 1, newPath, i - 1, j);
+                if (vert.Count != 0) {
+                    return vert;
+                }
 
-            List<int[]> left = searchWordRecursive(mot, index + 1, newPath, i, j - 1);
-            if (left.Count != 0) {
-                return left;
-            }
+                List<int[]> left = searchWordRecursive(mot, index + 1, newPath, i, j - 1);
+                if (left.Count != 0) {
+                    return left;
+                }
 
-            List<int[]> right = searchWordRecursive(mot, index + 1, newPath, i, j + 1);
-            if (right.Count != 0) {
-                return right;
-            }
+                List<int[]> right = searchWordRecursive(mot, index + 1, newPath, i, j + 1);
+                if (right.Count != 0) {
+                    return right;
+                }
 
-            List<int[]> diagLeft = searchWordRecursive(mot, index + 1, newPath, i - 1, j - 1);
-            if (diagLeft.Count != 0) {
-                return diagLeft;
-            }
+                List<int[]> diagLeft = searchWordRecursive(mot, index + 1, newPath, i - 1, j - 1);
+                if (diagLeft.Count != 0) {
+                    return diagLeft;
+                }
 
-            return searchWordRecursive(mot, index + 1, newPath, i - 1, j + 1); //diag right
-        } else {
-            List<int[]> newPath = indexPath.Concat(new List<int[]> {new int[2] {i,j}}).ToList();
-            return newPath;
+                return searchWordRecursive(mot, index + 1, newPath, i - 1, j + 1); //diag right
+            } else {
+                List<int[]> newPath = indexPath.Concat(new List<int[]> {new int[2] {i,j}}).ToList();
+                return newPath;
+            }
+        } catch (IndexOutOfRangeException) {
+            return new List<int[]>();
         }
     }
 
@@ -162,7 +166,7 @@ class Plateau {
             tableau[indexPair[0],indexPair[1]] = null;
         }
         for (int i = 0; i < tableau.GetLength(0); i++) {
-            for (int j = 1; j < tableau.GetLength(1); j++) {
+            for (int j = 0; j < tableau.GetLength(1); j++) {
                 if (tableau[i,j] == null) {
                     int lastIndex = -1;
                     for (int k = i; k >= 1 && tableau[k-1,j] != null; k--) {
