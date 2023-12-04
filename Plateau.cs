@@ -1,10 +1,21 @@
 class Plateau {
     Lettre?[,] tableau;
 
+    /// <summary>
+    /// Native constructor for Plateau
+    /// </summary>
+    /// <param name="tableau">board representation</param>
     public Plateau(Lettre[,] tableau) {
         this.tableau = tableau;
     }
 
+    /// <summary>
+    /// Fetches a saved board from file
+    /// </summary>
+    /// <param name="filename">filename where board is saved</param>
+    /// <param name="lettersWeightFile">optional parameter to indicate weight for letters; if not 
+    /// specified -> default values are used</param>
+    /// <returns>Returns a Letter board ready to be passed to constructor</returns>
     public static Lettre[,] fetchBoardFromFile(string filename, string lettersWeightFile="") {
         csvInterface fileInterface = new csvInterface(filename, ';');
         string[,] tableChars = fileInterface.parseFromFile();
@@ -54,6 +65,12 @@ class Plateau {
         return board;
     }
 
+    /// <summary>
+    /// Creates a random board
+    /// </summary>
+    /// <param name="lettersFile">letters specs filename with extension</param>
+    /// <param name="size">size of the board, default to 8</param>
+    /// <returns>Returns a Letter board ready to be passed to constructor</returns>
     public static Lettre[,] createRandomBoard(string lettersFile, int size=8) {
         csvInterface fileInterface = new csvInterface(lettersFile, ',');
         string[,] lettersData = fileInterface.parseFromFile();
@@ -76,6 +93,11 @@ class Plateau {
         return board;
     }
 
+    /// <summary>
+    /// Saves current board to file
+    /// </summary>
+    /// <param name="filename">filename used for saving board</param>
+    /// <returns>Returns whether file export was successful or not</returns>
     public bool ToFile(string filename) {
         tableau[3,3] = null;
         StreamWriter? streamWriter = null;
@@ -95,6 +117,11 @@ class Plateau {
 
     }
     
+    /// <summary>
+    /// Plateau toString method
+    /// </summary>
+    /// <param name="toCSV">optional parameter defaults to false; adds semi-colon between letters when set to true</param>
+    /// <returns>Returns board reprenstation ie size*size matrice or chars</returns>
     public string toString(bool toCSV = false) {
         string built = "";
         for (int i = 0; i < tableau.GetLength(0); i++) {
@@ -107,6 +134,12 @@ class Plateau {
         return built;
     }
 
+    /// <summary>
+    /// Word search entry point
+    /// </summary>
+    /// <param name="mot">word search</param>
+    /// <param name="joueur">instance of joueur who wrote the word</param>
+    /// <returns>Returns sorted list of letter indexes if word was found, else empty list</returns>
     public List<int[]> searchWord(string mot, Joueur joueur) {
         List<int[]> indexPath = new List<int[]>();
         if (mot.Length >= 2 && !joueur.MotsTrouves.Contains(mot)) {
@@ -126,7 +159,16 @@ class Plateau {
         return indexPath;
     }
 
-        private List<int[]> searchWordRecursive(string mot, int index, List<int[]> indexPath, int i, int j) {
+    /// <summary>
+    /// Private method implementing the recursive search logic
+    /// </summary>
+    /// <param name="mot">word search</param>
+    /// <param name="index">working index of word</param>
+    /// <param name="indexPath">continously built index pair list</param>
+    /// <param name="i">board position</param>
+    /// <param name="j">board position</param>
+    /// <returns>Returns sorted list of letter indexes if word was found, else empty list</returns>
+    private List<int[]> searchWordRecursive(string mot, int index, List<int[]> indexPath, int i, int j) {
         try {
             if (mot[index] != tableau[i,j]!.Character) return new List<int[]>();
             else if (index != mot.Length-1) {
@@ -161,6 +203,10 @@ class Plateau {
         }
     }
 
+    /// <summary>
+    /// Update board after word found
+    /// </summary>
+    /// <param name="indexes">List of letter index pairs</param>
     public void updateBoard(List<int[]> indexes) {
         foreach(int[] indexPair in indexes) {
             tableau[indexPair[0],indexPair[1]] = null;

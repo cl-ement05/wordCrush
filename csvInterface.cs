@@ -2,15 +2,20 @@ class csvInterface {
     string filename;
     char separator;
 
-    public csvInterface(string filename, char separator) {
+    /// <summary>
+    /// Native constructor for csvInterface
+    /// </summary>
+    /// <param name="filename">csv filename to parse (can be absolute or relative path) with extension</param>
+    /// <param name="separator">csv separator used in this file</param>
+    public csvInterface(string filename, char separator = ';') {
         this.filename = filename;
         this.separator = separator;
     }
 
     /// <summary>
-    /// Parse data from the given filename and using given separator 
+    /// Parse data file
     /// </summary>
-    /// <returns>Returns parsed data as double array of char</returns>
+    /// <returns>Returns parsed data as double array of char using given filename and separator</returns>
     public string[,] parseFromFile() {
         StreamReader? streamReader = null;
         int counter = 0;
