@@ -22,7 +22,8 @@ class Program
         Plateau board = new Plateau(letterBoard);
         Console.WriteLine(board.toString());
         Joueur joueur = new Joueur("Clement");
-        board.updateBoard(board.searchWord(Console.ReadLine()!, joueur));
+        List<int[]> indexes = board.searchWord(Console.ReadLine()!, joueur);
+        board.updateBoard(indexes);
         Console.WriteLine(board.toString());
     }
 }

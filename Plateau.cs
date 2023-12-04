@@ -119,25 +119,41 @@ class Plateau {
                 }
             }
             if (indexStart != -1) {
-                return searchWordRecursive(mot, 0, new List<int[]>(), lastLine, indexStart);
+                indexPath = searchWordRecursive(mot, 0, new List<int[]>(), lastLine, indexStart);
             }
         }
         
         return indexPath;
     }
 
-    private List<int[]> searchWordRecursive(string mot, int index, List<int[]> indexPath, int i, int j) {
+        private List<int[]> searchWordRecursive(string mot, int index, List<int[]> indexPath, int i, int j) {
         if (mot[index] != tableau[i,j]!.Character) return new List<int[]>();
         else if (index != mot.Length-1) {
-            indexPath.Add(new int[2] {i,j});
-            return searchWordRecursive(mot, index + 1, indexPath, i - 1, j).Concat(
-                searchWordRecursive(mot, index + 1, indexPath, i, j - 1)).ToList().Concat(
-                searchWordRecursive(mot, index + 1, indexPath, i, j + 1)).ToList().Concat(
-                searchWordRecursive(mot, index + 1, indexPath, i - 1, j - 1)).ToList().Concat(
-                searchWordRecursive(mot, index + 1, indexPath, i - 1, j + 1)).ToList();
+            List<int[]> newPath = indexPath.Concat(new List<int[]> {new int[2] {i,j}}).ToList();
+            List<int[]> vert = searchWordRecursive(mot, index + 1, newPath, i - 1, j);
+            if (vert.Count != 0) {
+                return vert;
+            }
+
+            List<int[]> left = searchWordRecursive(mot, index + 1, newPath, i, j - 1);
+            if (left.Count != 0) {
+                return left;
+            }
+
+            List<int[]> right = searchWordRecursive(mot, index + 1, newPath, i, j + 1);
+            if (right.Count != 0) {
+                return right;
+            }
+
+            List<int[]> diagLeft = searchWordRecursive(mot, index + 1, newPath, i - 1, j - 1);
+            if (diagLeft.Count != 0) {
+                return diagLeft;
+            }
+
+            return searchWordRecursive(mot, index + 1, newPath, i - 1, j + 1); //diag right
         } else {
-            indexPath.Add(new int[2] {i,j});
-            return indexPath;
+            List<int[]> newPath = indexPath.Concat(new List<int[]> {new int[2] {i,j}}).ToList();
+            return newPath;
         }
     }
 
