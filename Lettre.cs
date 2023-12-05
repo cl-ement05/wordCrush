@@ -52,7 +52,7 @@ class Lettre {
     /// <param name="randomInstance">Instance of random object</param>
     /// <returns>Returns a random Letter object chosen from the probability table</returns>
     public static Lettre randomLetter(Lettre[] probaTable, Random randomInstance) {
-        int rIndex = randomInstance.Next(0, 101);
+        int rIndex = randomInstance.Next(0, 100);
         return probaTable[rIndex];
     }
 
