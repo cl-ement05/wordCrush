@@ -1,54 +1,63 @@
 class Dictionnaire {
 
+    //TODO tt tester
     private string langage;
     private Dictionary<char, int> motParLettre;
-    private List<string> DicoTrié;
+    private Dictionary<char, List<string>> dico;
 
-    public Dictionnaire(string langage, string filePath)
+    public Dictionnaire(string langage, string filePath, Dictionary<char, List<string>> dico)
     {
         this.langage=langage;
         this.motParLettre=ReadWordsFromFile(filePath);
-        this.DicoTrié=Tri_Fusion(new List<string>());
+        foreach (char key in dico.Keys.ToList()) {
+            dico[key] = Tri_Fusion(dico[key]);
+        }
+        this.dico = dico;
     }
 
     private Dictionary<char, int> ReadWordsFromFile(string filePath)
     {
-        Dictionary<char, int> motParLettre = new Dictionary<char, int>();
+        Dictionary<char, int> dicoConstruit = new Dictionary<char, int>();
         try
         {
             string[] lines = File.ReadAllLines(filePath);
-            foreach (var line in lines)
+            //TODO streamreader au lieu de file
+            foreach (string line in lines)
             {
-                foreach (char lettre in line.ToUpper()) // Convertir en majuscules car plus simple
+                string[] broke = line.ToUpper().Split(" ");
+                foreach (string mot in broke) // Convertir en majuscules car plus simple
                 {
-                    if (Char.IsLetter(lettre))
+                    if (Char.IsLetter(mot[0]))
                     {
-                        if (motParLettre.ContainsKey(lettre))
+                        if (dicoConstruit.ContainsKey(mot[0]))
                         {
-                            motParLettre[lettre]++;
+                            dicoConstruit[mot[0]]++;
+                            dico[mot[0]].Add(mot);
                         }
                         else
                         {
-                            motParLettre[lettre] = 1;
+                            dicoConstruit[mot[0]] = 1;
+                            dico[mot[0]] = new List<string> {mot};
                         }
                     }
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Console.WriteLine("Une erreur s'est produite lors de la lecture du fichier.");
+            dicoConstruit = new Dictionary<char, int>();
         }
 
-        return motParLettre;
+        return dicoConstruit;
     }
     
     public string toString()
     {
         string s="Langage : "+langage+"\nNombre de mots par lettre :\n";
-        foreach(var a in motParLettre)
+        foreach(char key in motParLettre.Keys.ToList())
         {
-            s=a.Key+" : "+a.Value;
+            s=key+" : "+motParLettre[key];
         }
         return s;
     }
@@ -56,7 +65,7 @@ class Dictionnaire {
     public bool RechDichoRecursif(string mot)
     {
         // appel initial
-        return RechercheDichotomiqueRecursif(mot, 0, DicoTrié.Count-1);
+        return RechercheDichotomiqueRecursif(mot, 0, dico[mot[0]].Count-1);
     }
 
     private bool RechercheDichotomiqueRecursif(string mot, int debut, int fin)
@@ -68,7 +77,7 @@ class Dictionnaire {
         }
 
         int milieu = (debut + fin) / 2;
-        int comparaison = string.Compare(mot, DicoTrié[milieu], StringComparison.InvariantCultureIgnoreCase);
+        int comparaison = string.Compare(mot, dico[mot[0]][milieu], StringComparison.InvariantCultureIgnoreCase);
 
         if (comparaison == 0)
         {
@@ -97,7 +106,7 @@ class Dictionnaire {
 
         int middle = ListNonTriée.Count / 2;
         List<string> gauche = ListNonTriée.GetRange(0, middle);
-        List<string> droite = ListNonTriée.GetRange(middle, ListNonTriée.Count - middle);
+        List<string> droite = ListNonTriée.GetRange(middle, middle);
         gauche = Tri_Fusion(gauche);
         droite = Tri_Fusion(droite);
         return Fusion(gauche, droite);

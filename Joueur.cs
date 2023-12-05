@@ -29,7 +29,7 @@ class Joueur {
         {
             s+=" "+element;
         }
-        return ("Voici le joueur 1 : "+nom+". Son score est de "+score+". La liste de mots trouvés est : "+s);
+        return "Voici le joueur 1 : "+nom+". Son score est de "+score+". La liste de mots trouvés est :"+s;
     }
 
     public void Add_Mot(string mot)
