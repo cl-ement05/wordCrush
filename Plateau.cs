@@ -214,12 +214,14 @@ class Plateau {
         for (int i = 0; i < tableau.GetLength(0); i++) {
             for (int j = 0; j < tableau.GetLength(1); j++) {
                 if (tableau[i,j] == null) {
-                    int lastIndex = -1;
-                    for (int k = i; k >= 1 && tableau[k-1,j] != null; k--) {
-                        tableau[k,j] = tableau[k-1,j];
-                        lastIndex = k;
+                    int lastIndex = i;
+                    if (i != 0) {
+                        for (int k = i; k >= 1 && tableau[k-1,j] != null; k--) {
+                            tableau[k,j] = tableau[k-1,j];
+                            lastIndex = k;
+                        }
+                        tableau[lastIndex-1,j] = null;
                     }
-                    tableau[lastIndex-1,j] = null;
                 }
             }
         }
