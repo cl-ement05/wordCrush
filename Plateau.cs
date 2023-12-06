@@ -1,5 +1,5 @@
 class Plateau {
-    Lettre?[,] tableau;
+    readonly Lettre?[,] tableau;
 
     /// <summary>
     /// Native constructor for Plateau
@@ -143,16 +143,21 @@ class Plateau {
     public List<int[]> searchWord(string mot, Joueur joueur) {
         List<int[]> indexPath = new List<int[]>();
         if (mot.Length >= 2 && !joueur.MotsTrouves.Contains(mot)) {
-            int indexStart = -1;
+            List<int> indexes = new List<int> {-1};
             int lastLine = tableau.GetLength(0)-1;
-            
             for (int i = 0; i < tableau.GetLength(1); i++) {
                 if (tableau[lastLine,i]!.Character == mot[0]) {
-                    indexStart = i;
+                    indexes.Add(i);
                 }
             }
-            if (indexStart != -1) {
-                indexPath = searchWordRecursive(mot, 0, new List<int[]>(), lastLine, indexStart);
+            if (indexes.Count == 1) {
+                indexPath = searchWordRecursive(mot, 0, new List<int[]>(), lastLine, indexes[0]);
+            } else {
+                int i = 0;
+                while (indexPath.Count == 0) {
+                    indexPath = searchWordRecursive(mot, 0, new List<int[]>(), lastLine, indexes[i]);
+                    i++;
+                }
             }
         }
         

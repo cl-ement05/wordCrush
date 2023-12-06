@@ -1,6 +1,6 @@
 class csvInterface {
-    string filename;
-    char separator;
+    readonly string filename;
+    readonly char separator;
 
     /// <summary>
     /// Native constructor for csvInterface
