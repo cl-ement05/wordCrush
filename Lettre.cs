@@ -1,4 +1,5 @@
-class Lettre {
+namespace wordCrush {
+public class Lettre {
     readonly char character;
     readonly int frequency;
     readonly int weight;
@@ -63,4 +64,5 @@ class Lettre {
     public string toString() {
         return character.ToString();
     }
+}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 
-class Program
+namespace wordCrush {
+public class Program
 {
     static void Main()
     {
@@ -21,12 +22,11 @@ class Program
 
         string filePath="Mots_Français.txt";
         string langage="Français";
-        Dictionary<char, List<string>> dico1=new Dictionary<char, List<string>>();
-        Dictionnaire dico=new Dictionnaire(langage, filePath, dico1);
+        Dictionnaire dico=new Dictionnaire(langage, filePath);
         string s1=dico.toString();
         Console.WriteLine(s1);
 
-        string motrecherché="tennis";
+        string motrecherché="tennis".ToUpper();
         bool b=dico.RechDichoRecursif(motrecherché);
         if (b)
             Console.WriteLine("Le mot "+motrecherché+" a été trouvé dans le dictionnaire.");
@@ -44,4 +44,5 @@ class Program
         board.updateBoard(indexes);
         Console.WriteLine(board.toString());*/
     }
+}
 }

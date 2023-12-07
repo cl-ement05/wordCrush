@@ -1,4 +1,5 @@
-class Joueur {
+namespace wordCrush {
+public class Joueur {
     string nom;
     List<string> motsTrouves;
     int score;
@@ -55,4 +56,4 @@ class Joueur {
         return contient;
     }
 }
-    
+}

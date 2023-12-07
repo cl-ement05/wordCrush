@@ -1,4 +1,6 @@
-class Jeu {
+namespace wordCrush {
+public class Jeu {
 
     
+}
 }

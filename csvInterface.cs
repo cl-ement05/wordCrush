@@ -1,4 +1,5 @@
-class csvInterface {
+namespace wordCrush {
+public class csvInterface {
     readonly string filename;
     readonly char separator;
 
@@ -46,4 +47,5 @@ class csvInterface {
         streamReader?.Close(); //not using finally block because return statement not allowed inside finally
         return lines;
     }
+}
 }

@@ -1,4 +1,5 @@
-class Plateau {
+namespace wordCrush {
+public class Plateau {
     readonly Lettre?[,] tableau;
 
     /// <summary>
@@ -231,4 +232,5 @@ class Plateau {
             }
         }
     }
+}
 }

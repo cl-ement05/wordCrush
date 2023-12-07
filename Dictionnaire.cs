@@ -1,27 +1,22 @@
-class Dictionnaire {
+namespace wordCrush {
+public class Dictionnaire {
 
     
     private string langage;
     private Dictionary<char, int> motParLettre;
     private Dictionary<char, List<string>> dico;
 
-    public Dictionnaire(string langage, string filePath, Dictionary<char, List<string>> dico)
+    public Dictionnaire(string langage, string filePath)
     {
         this.langage=langage;
-        this.motParLettre=ReadWordsFromFile(filePath);
-        foreach (char key in dico.Keys.ToList()) {
-            dico[key] = Tri_Fusion(dico[key]);
-        }
-        this.dico = dico;
-    }
+        this.motParLettre = new Dictionary<char, int>();
+        this.dico = new Dictionary<char, List<string>>();
 
-    public Dictionary<char, int> ReadWordsFromFile(string filePath)
-    {
-        Dictionary<char, int> dicoConstruit = new Dictionary<char, int>();
+        //reading from file
         try
         {
             StreamReader lines=new StreamReader(filePath);
-            string line;
+            string? line;
             while((line=lines.ReadLine())!=null)
             {
                 string[] broke = line.ToUpper().Split(" ");
@@ -29,14 +24,14 @@ class Dictionnaire {
                 {
                     if (Char.IsLetter(mot[0]))
                     {
-                        if (dicoConstruit.ContainsKey(mot[0]))
+                        if (motParLettre.ContainsKey(mot[0]))
                         {
-                            dicoConstruit[mot[0]]++;
+                            motParLettre[mot[0]]++;
                             dico[mot[0]].Add(mot);
                         }
                         else
                         {
-                            dicoConstruit[mot[0]] = 1;
+                            motParLettre[mot[0]] = 1;
                             dico[mot[0]] = new List<string> {mot};
                         }
                     }
@@ -46,10 +41,13 @@ class Dictionnaire {
         catch (Exception)
         {
             Console.WriteLine("Une erreur s'est produite lors de la lecture du fichier.");
-            dicoConstruit = new Dictionary<char, int>();
+            motParLettre = new Dictionary<char, int>();
+            dico = new Dictionary<char, List<string>>();
         }
 
-        return dicoConstruit;
+        foreach (char key in dico.Keys.ToList()) {
+            dico[key] = Tri_Fusion(dico[key]);
+        }
     }
     
     public string toString()
@@ -57,7 +55,7 @@ class Dictionnaire {
         string s="Langage : "+langage+"\nNombre de mots par lettre :\n";
         foreach(char key in motParLettre.Keys.ToList())
         {
-            s=key+" : "+motParLettre[key];
+            s+=key+" : "+motParLettre[key] + "\n";
         }
         return s;
     }
@@ -146,4 +144,5 @@ class Dictionnaire {
 
         return result;
     }
+}
 }
