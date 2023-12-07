@@ -104,7 +104,7 @@ public class Dictionnaire {
 
         int middle = ListNonTriée.Count / 2;
         List<string> gauche = ListNonTriée.GetRange(0, middle);
-        List<string> droite = ListNonTriée.GetRange(middle, middle);
+        List<string> droite = ListNonTriée.GetRange(middle, ListNonTriée.Count-middle);
         gauche = Tri_Fusion(gauche);
         droite = Tri_Fusion(droite);
         return Fusion(gauche, droite);
@@ -118,7 +118,7 @@ public class Dictionnaire {
 
         while (leftIndex < gauche.Count && rightIndex < droite.Count)
         {
-            int comparisonResult = string.Compare(gauche[leftIndex], droite[rightIndex], StringComparison.InvariantCultureIgnoreCase);
+            int comparisonResult = string.Compare(gauche[leftIndex], droite[rightIndex]);
             if (comparisonResult <= 0)
             {
                 result.Add(gauche[leftIndex]);
