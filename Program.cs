@@ -19,7 +19,7 @@ class Program
         }
 
 
-        string filePath="C:/Users/alban/OneDrive - De Vinci/A2 Semestre3/Algorithmique et POO/wordCrush/Mots_Français.txt";
+        string filePath="Mots_Français.txt";
         string langage="Français";
         Dictionary<char, List<string>> dico1=new Dictionary<char, List<string>>();
         Dictionnaire dico=new Dictionnaire(langage, filePath, dico1);
