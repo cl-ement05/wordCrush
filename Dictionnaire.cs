@@ -1,6 +1,6 @@
 class Dictionnaire {
 
-    //TODO tt tester
+    
     private string langage;
     private Dictionary<char, int> motParLettre;
     private Dictionary<char, List<string>> dico;
@@ -15,14 +15,14 @@ class Dictionnaire {
         this.dico = dico;
     }
 
-    private Dictionary<char, int> ReadWordsFromFile(string filePath)
+    public Dictionary<char, int> ReadWordsFromFile(string filePath)
     {
         Dictionary<char, int> dicoConstruit = new Dictionary<char, int>();
         try
         {
-            string[] lines = File.ReadAllLines(filePath);
-            //TODO streamreader au lieu de file
-            foreach (string line in lines)
+            StreamReader lines=new StreamReader(filePath);
+            string line;
+            while((line=lines.ReadLine())!=null)
             {
                 string[] broke = line.ToUpper().Split(" ");
                 foreach (string mot in broke) // Convertir en majuscules car plus simple
