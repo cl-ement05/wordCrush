@@ -26,7 +26,7 @@ public class Program
         string s1=dico.toString();
         Console.WriteLine(s1);
 
-        string motrecherché="tennis".ToUpper();
+        string motrecherché="tennis";
         bool b=dico.RechDichoRecursif(motrecherché);
         if (b)
             Console.WriteLine("Le mot "+motrecherché+" a été trouvé dans le dictionnaire.");
@@ -36,13 +36,13 @@ public class Program
         }
 
 
-        /*Lettre[,] letterBoard = Plateau.fetchBoardFromFile("Test1.csv");
+        Lettre[,] letterBoard = Plateau.fetchBoardFromFile("Test1.csv");
         Plateau board = new Plateau(letterBoard);
         Console.WriteLine(board.toString());
         Joueur joueur = new Joueur("Clement");
         List<int[]> indexes = board.searchWord(Console.ReadLine()!, joueur);
         board.updateBoard(indexes);
-        Console.WriteLine(board.toString());*/
+        Console.WriteLine(board.toString());
     }
 }
 }

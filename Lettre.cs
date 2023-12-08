@@ -29,8 +29,8 @@ public class Lettre {
     /// </summary>
     /// <param name="lettres">Lettre array, sum of frequencies should be 100</param>
     /// <returns>Returns a table where letter occurence matches its frequency</returns>
-    public static Lettre[]? buildProbabilityTable(Lettre[] lettres) {
-        Lettre[]? table = new Lettre[100];
+    public static Lettre[] buildProbabilityTable(Lettre[] lettres) {
+        Lettre[] table = new Lettre[100];
         try {
             int index = 0;
             foreach(Lettre lettre in lettres) {
@@ -41,8 +41,13 @@ public class Lettre {
             }
         } catch (IndexOutOfRangeException) {
             Console.WriteLine("Frequency of all letters is different from 100% please double check your file");
-            table = null;
+            table = Array.Empty<Lettre>();
         }
+        if (table[99] == null) {
+            Console.WriteLine("Frequency of all letters is different from 100% please double check your file");
+            table = Array.Empty<Lettre>();
+        }
+        //if last element is null => array was not fully filled so proba sum != 100 
         return table;
     }
 

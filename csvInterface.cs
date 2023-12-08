@@ -32,8 +32,10 @@ public class csvInterface {
             }
         } catch (IOException e) {
             Console.WriteLine(e.Message);
+            lines = new string[0,0];
         } catch (Exception e) {
             Console.WriteLine(e.Message);
+            lines = new string[0,0];
         }
          //not using finally block because return statement not allowed inside finally
         return lines;

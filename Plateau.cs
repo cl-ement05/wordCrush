@@ -2,10 +2,39 @@ namespace wordCrush {
 public class Plateau {
     readonly Lettre?[,] tableau;
 
+    readonly static Dictionary<char, int> lettersWeightConst = new Dictionary<char, int>{
+                    ['A'] = 1,
+                    ['B'] = 3,
+                    ['C'] = 3,
+                    ['D'] = 2,
+                    ['E'] = 1,
+                    ['F'] = 4,
+                    ['G'] = 2,
+                    ['H'] = 4,
+                    ['I'] = 1,
+                    ['J'] = 8,
+                    ['K'] = 10,
+                    ['L'] = 1,
+                    ['M'] = 2,
+                    ['N'] = 1,
+                    ['O'] = 1,
+                    ['P'] = 3,
+                    ['Q'] = 8,
+                    ['R'] = 1,
+                    ['S'] = 1,
+                    ['T'] = 1,
+                    ['U'] = 1,
+                    ['V'] = 4,
+                    ['W'] = 10,
+                    ['X'] = 10,
+                    ['Y'] = 10,
+                    ['Z'] = 10,
+                };
+
     /// <summary>
     /// Native constructor for Plateau
     /// </summary>
-    /// <param name="tableau">board representation</param>
+    /// <param name="tableau">board representation containing UPPER CASE letter instances</param>
     public Plateau(Lettre[,] tableau) {
         this.tableau = tableau;
     }
@@ -14,55 +43,36 @@ public class Plateau {
     /// Fetches a saved board from file
     /// </summary>
     /// <param name="filename">filename where board is saved</param>
-    /// <param name="lettersWeightFile">optional parameter to indicate weight for letters; if not 
+    /// <param name="lettersWeightFile">optional parameter to indicate weight ie score for letters; if not 
     /// specified -> default values are used</param>
     /// <returns>Returns a Letter board ready to be passed to constructor</returns>
     public static Lettre[,] fetchBoardFromFile(string filename, string lettersWeightFile="") {
         csvInterface fileInterface = new csvInterface(filename, ';');
         string[,] tableChars = fileInterface.parseFromFile();
-        Lettre[,] board = new Lettre[tableChars.GetLength(0),tableChars.GetLength(1)];
-        Dictionary<char, int> lettersWeight = new Dictionary<char, int>();
-        if (lettersWeightFile != "") {
-            csvInterface fileWeightInterface = new csvInterface(lettersWeightFile, ';');
-            string[,] lettersWeightTable = fileWeightInterface.parseFromFile();
-            for (int i = 0 ; i < lettersWeightTable.GetLength(0); i++) {
-                lettersWeight.Add(char.Parse(lettersWeightTable[i,0]), int.Parse(lettersWeightTable[i,1]));
+        Lettre[,] board = new Lettre[0,0];
+        if (tableChars.GetLength(0) != 0) {
+            board = new Lettre[tableChars.GetLength(0),tableChars.GetLength(1)];
+            Dictionary<char, int> lettersWeight = new Dictionary<char, int>();
+            if (lettersWeightFile != "") {
+                csvInterface fileWeightInterface = new csvInterface(lettersWeightFile, ';');
+                string[,] lettersWeightTable = fileWeightInterface.parseFromFile();
+                if (lettersWeightTable.GetLength(0) == 26) {
+                    for (int i = 0 ; i < lettersWeightTable.GetLength(0); i++) {
+                        lettersWeight.Add(char.Parse(lettersWeightTable[i,0].ToUpper()), int.Parse(lettersWeightTable[i,1]));
+                    }
+                } else {
+                    if (lettersWeightTable.GetLength(0) != 0) Console.WriteLine("Invalid file format");
+                    Console.WriteLine("Using default values for letters weight instead...");
+                    lettersWeight = lettersWeightConst;
+                }
+            } else lettersWeight = lettersWeightConst;
+
+            for (int i = 0; i < tableChars.GetLength(0); i++) {
+                for (int j = 0; j < tableChars.GetLength(1); j++) {
+                    board[i,j] = new Lettre(char.Parse(tableChars[i,j].ToUpper()), -1, lettersWeight[char.Parse(tableChars[i,j].ToUpper())]);
+                }
             }
-        } else {
-            lettersWeight = new Dictionary<char, int>{
-                ['a'] = 1,
-                ['b'] = 3,
-                ['c'] = 3,
-                ['d'] = 2,
-                ['e'] = 1,
-                ['f'] = 4,
-                ['g'] = 2,
-                ['h'] = 4,
-                ['i'] = 1,
-                ['j'] = 8,
-                ['k'] = 10,
-                ['l'] = 1,
-                ['m'] = 2,
-                ['n'] = 1,
-                ['o'] = 1,
-                ['p'] = 3,
-                ['q'] = 8,
-                ['r'] = 1,
-                ['s'] = 1,
-                ['t'] = 1,
-                ['u'] = 1,
-                ['v'] = 4,
-                ['w'] = 10,
-                ['x'] = 10,
-                ['y'] = 10,
-                ['z'] = 10,
-            };
-        }
-        for (int i = 0; i < tableChars.GetLength(0); i++) {
-            for (int j = 0; j < tableChars.GetLength(1); j++) {
-                board[i,j] = new Lettre(char.Parse(tableChars[i,j]), -1, lettersWeight[char.Parse(tableChars[i,j])]);
-            }
-        }
+        } 
         return board;
     }
 
@@ -75,20 +85,27 @@ public class Plateau {
     public static Lettre[,] createRandomBoard(string lettersFile, int size=8) {
         csvInterface fileInterface = new csvInterface(lettersFile, ',');
         string[,] lettersData = fileInterface.parseFromFile();
-        Lettre[] tabLettres = new Lettre[lettersData.GetLength(0)];
-        for (int i = 0; i < lettersData.GetLength(0); i++) {
-            tabLettres[i] = new Lettre(char.Parse(lettersData[i,0]), int.Parse(lettersData[i,1]), int.Parse(lettersData[i,2]));
-        }
-        Lettre[] probaTable = Lettre.buildProbabilityTable(tabLettres) ?? Array.Empty<Lettre>();
         Lettre[,] board = new Lettre[0,0];
-        if (probaTable.Length != 0) {
-            board = new Lettre[size, size];
-            Random random = new Random();
-            for (int i = 0; i < board.GetLength(0); i++) {
-                for (int j = 0; j < board.GetLength(1); j++) {
-                    board[i,j] = Lettre.randomLetter(probaTable, random);
+        try {
+            if (lettersData.GetLength(0) != 0) {
+                Lettre[] tabLettres = new Lettre[lettersData.GetLength(0)];
+                for (int i = 0; i < lettersData.GetLength(0); i++) {
+                    tabLettres[i] = new Lettre(char.Parse(lettersData[i,0].ToUpper()), int.Parse(lettersData[i,1]), int.Parse(lettersData[i,2]));
+                }
+                Lettre[] probaTable = Lettre.buildProbabilityTable(tabLettres) ?? Array.Empty<Lettre>();
+                if (probaTable.Length != 0) {
+                    board = new Lettre[size, size];
+                    Random random = new Random();
+                    for (int i = 0; i < board.GetLength(0); i++) {
+                        for (int j = 0; j < board.GetLength(1); j++) {
+                            board[i,j] = Lettre.randomLetter(probaTable, random);
+                        }
+                    }
                 }
             }
+        } catch (Exception e) {
+            Console.WriteLine(e.Message);
+            Console.WriteLine("Please ensure you are using the right file format");
         }
 
         return board;
@@ -142,6 +159,7 @@ public class Plateau {
     /// <param name="joueur">instance of joueur who wrote the word</param>
     /// <returns>Returns sorted list of letter indexes if word was found, else empty list</returns>
     public List<int[]> searchWord(string mot, Joueur joueur) {
+        mot = mot.ToUpper();
         List<int[]> indexPath = new List<int[]>();
         if (mot.Length >= 2 && !joueur.MotsTrouves.Contains(mot)) {
             List<int> indexes = new List<int> {-1};
@@ -168,7 +186,7 @@ public class Plateau {
     /// <summary>
     /// Private method implementing the recursive search logic
     /// </summary>
-    /// <param name="mot">word search</param>
+    /// <param name="mot">word search MUST BE UPPER CASE</param>
     /// <param name="index">working index of word</param>
     /// <param name="indexPath">continously built index pair list</param>
     /// <param name="i">board position</param>

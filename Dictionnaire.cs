@@ -6,6 +6,11 @@ public class Dictionnaire {
     private readonly Dictionary<char, int> motParLettre;
     private readonly Dictionary<char, List<string>> dico;
 
+    /// <summary>
+    /// Native constructor for Dictionnaire
+    /// </summary>
+    /// <param name="langage">language used</param>
+    /// <param name="filePath">filepath of words file</param>
     public Dictionnaire(string langage, string filePath)
     {
         this.langage=langage;
@@ -37,6 +42,10 @@ public class Dictionnaire {
                     }
                 }
             }
+            foreach (char key in dico.Keys.ToList()) {
+                dico[key] = Tri_Fusion(dico[key]);
+            }
+
         }
         catch (Exception)
         {
@@ -44,12 +53,12 @@ public class Dictionnaire {
             motParLettre = new Dictionary<char, int>();
             dico = new Dictionary<char, List<string>>();
         }
-
-        foreach (char key in dico.Keys.ToList()) {
-            dico[key] = Tri_Fusion(dico[key]);
-        }
     }
     
+    /// <summary>
+    /// Dictionnaire toString method
+    /// </summary>
+    /// <returns>Returns infos about Dictionnaire</returns>
     public string toString()
     {
         string s="Langage : "+langage+"\nNombre de mots par lettre :\n";
@@ -60,12 +69,25 @@ public class Dictionnaire {
         return s;
     }
 
+    /// <summary>
+    /// Recursive word search entry point
+    /// </summary>
+    /// <param name="mot">word search</param>
+    /// <returns>Returns true if word was found in dict</returns>
     public bool RechDichoRecursif(string mot)
     {
         // appel initial
+        mot = mot.ToUpper();
         return RechercheDichotomiqueRecursif(mot, 0, dico[mot[0]].Count-1);
     }
 
+    /// <summary>
+    /// Recursive method algo for word search
+    /// </summary>
+    /// <param name="mot">word search</param>
+    /// <param name="debut">start index</param>
+    /// <param name="fin">end index</param>
+    /// <returns>Returns true if word was found in dict</returns>
     private bool RechercheDichotomiqueRecursif(string mot, int debut, int fin)
     {
         if (debut > fin)
@@ -75,7 +97,7 @@ public class Dictionnaire {
         }
 
         int milieu = (debut + fin) / 2;
-        int comparaison = string.Compare(mot, dico[mot[0]][milieu], StringComparison.InvariantCultureIgnoreCase);
+        int comparaison = string.Compare(mot, dico[mot[0]][milieu]);
 
         if (comparaison == 0)
         {
@@ -95,6 +117,11 @@ public class Dictionnaire {
     }
 
 
+    /// <summary>
+    /// Merge sort
+    /// </summary>
+    /// <param name="ListNonTriée">unsorted list</param>
+    /// <returns>Returns list sorted in alphabetical order</returns>
     private List<string> Tri_Fusion(List<string> ListNonTriée)
     {
         if (ListNonTriée.Count <= 1)
@@ -110,6 +137,12 @@ public class Dictionnaire {
         return Fusion(gauche, droite);
     }
 
+    /// <summary>
+    /// Sorted list merging method
+    /// </summary>
+    /// <param name="gauche">first list</param>
+    /// <param name="droite">second list</param>
+    /// <returns>Returns sorted merger of the two lists</returns>
     private List<string> Fusion(List<string> gauche, List<string> droite)
     {
         List<string> result = new List<string>();
