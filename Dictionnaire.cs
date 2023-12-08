@@ -2,9 +2,9 @@ namespace wordCrush {
 public class Dictionnaire {
 
     
-    private string langage;
-    private Dictionary<char, int> motParLettre;
-    private Dictionary<char, List<string>> dico;
+    private readonly string langage;
+    private readonly Dictionary<char, int> motParLettre;
+    private readonly Dictionary<char, List<string>> dico;
 
     public Dictionnaire(string langage, string filePath)
     {

@@ -1,7 +1,7 @@
 namespace wordCrush {
 public class Joueur {
-    string nom;
-    List<string> motsTrouves;
+    readonly string nom;
+    readonly List<string> motsTrouves;
     int score;
 
     public Joueur(string nom) {
@@ -12,7 +12,6 @@ public class Joueur {
 
     public string Nom{
         get{return this.nom;}
-        set{this.nom=value;}
     }
     public int Score {
         get{return this.score;}
@@ -20,7 +19,6 @@ public class Joueur {
     }
     public List<string> MotsTrouves {
         get {return this.motsTrouves;}
-        set {this.motsTrouves=value;}
     }
 
     public string toString()
