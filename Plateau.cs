@@ -50,29 +50,36 @@ public class Plateau {
         csvInterface fileInterface = new csvInterface(filename, ';');
         string[,] tableChars = fileInterface.parseFromFile();
         Lettre[,] board = new Lettre[0,0];
-        if (tableChars.GetLength(0) != 0) {
-            board = new Lettre[tableChars.GetLength(0),tableChars.GetLength(1)];
-            Dictionary<char, int> lettersWeight = new Dictionary<char, int>();
-            if (lettersWeightFile != "") {
-                csvInterface fileWeightInterface = new csvInterface(lettersWeightFile, ';');
-                string[,] lettersWeightTable = fileWeightInterface.parseFromFile();
-                if (lettersWeightTable.GetLength(0) == 26) {
-                    for (int i = 0 ; i < lettersWeightTable.GetLength(0); i++) {
-                        lettersWeight.Add(char.Parse(lettersWeightTable[i,0].ToUpper()), int.Parse(lettersWeightTable[i,1]));
+        try {
+            if (tableChars.GetLength(0) != 0) {
+                board = new Lettre[tableChars.GetLength(0),tableChars.GetLength(1)];
+                Dictionary<char, int> lettersWeight = new Dictionary<char, int>();
+                if (lettersWeightFile != "") {
+                    csvInterface fileWeightInterface = new csvInterface(lettersWeightFile, ';');
+                    string[,] lettersWeightTable = fileWeightInterface.parseFromFile();
+                    if (lettersWeightTable.GetLength(0) == 26) {
+                        for (int i = 0 ; i < lettersWeightTable.GetLength(0); i++) {
+                            lettersWeight.Add(char.Parse(lettersWeightTable[i,0].ToUpper()), int.Parse(lettersWeightTable[i,1]));
+                        }
+                        Console.WriteLine("Letters score file successfully imported !");
+                    } else {
+                        Console.WriteLine("Invalid file format for score file");
+                        Console.WriteLine("Using default values for letters weight instead...");
+                        lettersWeight = lettersWeightConst;
                     }
-                } else {
-                    if (lettersWeightTable.GetLength(0) != 0) Console.WriteLine("Invalid file format");
-                    Console.WriteLine("Using default values for letters weight instead...");
-                    lettersWeight = lettersWeightConst;
-                }
-            } else lettersWeight = lettersWeightConst;
+                } else lettersWeight = lettersWeightConst;
 
-            for (int i = 0; i < tableChars.GetLength(0); i++) {
-                for (int j = 0; j < tableChars.GetLength(1); j++) {
-                    board[i,j] = new Lettre(char.Parse(tableChars[i,j].ToUpper()), -1, lettersWeight[char.Parse(tableChars[i,j].ToUpper())]);
+                for (int i = 0; i < tableChars.GetLength(0); i++) {
+                    for (int j = 0; j < tableChars.GetLength(1); j++) {
+                        board[i,j] = new Lettre(char.Parse(tableChars[i,j].ToUpper()), -1, lettersWeight[char.Parse(tableChars[i,j].ToUpper())]);
+                    }
                 }
-            }
-        } 
+            } else throw new ArgumentException();
+        } catch (Exception) {
+            Console.WriteLine("Invalid file format for board file");
+            Console.WriteLine("Try again");
+            board = new Lettre[0,0];
+        }
         return board;
     }
 
@@ -102,10 +109,11 @@ public class Plateau {
                         }
                     }
                 }
-            }
+            } else throw new ArgumentException();
         } catch (Exception e) {
             Console.WriteLine(e.Message);
             Console.WriteLine("Please ensure you are using the right file format");
+            Console.WriteLine("Try again");
         }
 
         return board;
@@ -158,10 +166,10 @@ public class Plateau {
     /// <param name="mot">word search</param>
     /// <param name="joueur">instance of joueur who wrote the word</param>
     /// <returns>Returns sorted list of letter indexes if word was found, else empty list</returns>
-    public List<int[]> searchWord(string mot, Joueur joueur) {
+    public List<int[]> searchWord(string mot) {
         mot = mot.ToUpper();
         List<int[]> indexPath = new List<int[]>();
-        if (mot.Length >= 2 && !joueur.MotsTrouves.Contains(mot)) {
+        if (mot.Length >= 2) {
             List<int> indexes = new List<int> {-1};
             int lastLine = tableau.GetLength(0)-1;
             for (int i = 0; i < tableau.GetLength(1); i++) {
@@ -231,8 +239,10 @@ public class Plateau {
     /// Update board after word found
     /// </summary>
     /// <param name="indexes">List of letter index pairs</param>
-    public void updateBoard(List<int[]> indexes) {
+    public int updateBoard(List<int[]> indexes) {
+        int score = 0;
         foreach(int[] indexPair in indexes) {
+            score += tableau[indexPair[0],indexPair[1]]!.Weight;
             tableau[indexPair[0],indexPair[1]] = null;
         }
         for (int i = 0; i < tableau.GetLength(0); i++) {
@@ -249,6 +259,7 @@ public class Plateau {
                 }
             }
         }
+        return score;
     }
 }
 }

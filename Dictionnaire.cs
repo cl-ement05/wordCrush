@@ -6,6 +6,10 @@ public class Dictionnaire {
     private readonly Dictionary<char, int> motParLettre;
     private readonly Dictionary<char, List<string>> dico;
 
+    public Dictionary<char, List<string>> Dico {
+        get { return this.dico; }
+    }
+
     /// <summary>
     /// Native constructor for Dictionnaire
     /// </summary>
@@ -49,7 +53,7 @@ public class Dictionnaire {
         }
         catch (Exception)
         {
-            Console.WriteLine("Une erreur s'est produite lors de la lecture du fichier.");
+            Console.WriteLine("Error while reading file, double check filename, permissions and data format");
             motParLettre = new Dictionary<char, int>();
             dico = new Dictionary<char, List<string>>();
         }

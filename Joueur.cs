@@ -4,6 +4,10 @@ public class Joueur {
     readonly List<string> motsTrouves;
     int score;
 
+    /// <summary>
+    /// Native constructor for joueur
+    /// </summary>
+    /// <param name="nom">Player name</param>
     public Joueur(string nom) {
         this.nom = nom;
         this.score = 0;
@@ -21,6 +25,10 @@ public class Joueur {
         get {return this.motsTrouves;}
     }
 
+    /// <summary>
+    /// Joueur toString method
+    /// </summary>
+    /// <returns>Returns infos about player</returns>
     public string toString()
     {
         string s="";
@@ -31,25 +39,36 @@ public class Joueur {
         return "Voici le joueur 1 : "+nom+". Son score est de "+score+". La liste de mots trouvés est :"+s;
     }
 
+    /// <summary>
+    /// Add word to found words list
+    /// </summary>
+    /// <param name="mot">new word to add</param>
     public void Add_Mot(string mot)
     {
         motsTrouves.Add(mot);
     }
 
+    /// <summary>
+    /// Add points to current score
+    /// </summary>
+    /// <param name="val">Points scored</param>
     public void Add_Score(int val)
     {
         score+=val;
     }
 
+    /// <summary>
+    /// Check found words
+    /// </summary>
+    /// <param name="mot">search word</param>
+    /// <returns>Returns whether word was already found by player or not</returns>
     public bool Contient(string mot)
     {
-        bool contient = true;
+        bool contient = false;
         foreach(string element in motsTrouves)
         {
             if (element==mot)
                 contient=true;
-            else if (element!=mot)
-                contient=false;
         }
         return contient;
     }
