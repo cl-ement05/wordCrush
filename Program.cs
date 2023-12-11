@@ -109,6 +109,7 @@ public class Program
         mainTimer.Elapsed += (sender, e) => game.end();
         mainTimer.AutoReset = false;
         mainTimer.Start();
+        game.MainTimer = mainTimer;
         return game;
     }
 

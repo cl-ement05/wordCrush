@@ -5,6 +5,8 @@ public class Jeu {
     Joueur[] joueurs;
     int currentPlayer;
     bool play;
+    System.Timers.Timer playerTimer;
+    System.Timers.Timer mainTimer;
 
     /// <summary>
     /// Native constructor for Jeu
@@ -20,11 +22,18 @@ public class Jeu {
         this.play = true;
     }
 
+    public System.Timers.Timer MainTimer {
+        set { mainTimer = value; }
+    }
+
     /// <summary>
     /// Call when you want to end game instance
     /// </summary>
     public void end() {
         play = false;
+        mainTimer.Stop();
+        mainTimer.Dispose();
+        playerTimer.Stop();
         Console.WriteLine("\nGAME IS OVER");
         Console.WriteLine("Scores : ");
         List<Joueur> winners = new List<Joueur>() {joueurs[0]};
@@ -47,7 +56,12 @@ public class Jeu {
     /// Main method for running game
     /// </summary>
     public void playGame() {
-        while (play) {
+        playerTimer = new System.Timers.Timer(30000);
+        playerTimer.Elapsed += (sender, e) => nextPlayer();
+        playerTimer.AutoReset = false;
+    
+        while (play) {            
+            playerTimer.Start();
             int nbrCurrent = currentPlayer % joueurs.Count();
             Joueur currentJoueur = joueurs[nbrCurrent];
             Console.WriteLine("Next turn !");
@@ -69,9 +83,16 @@ public class Jeu {
             currentJoueur.Add_Score(toAdd);
             Console.WriteLine($"{currentJoueur.Nom} you scored {toAdd} ! Total score : {currentJoueur.Score}");
             currentPlayer++;
+            playerTimer.Stop();
 
         }
 
+    }
+
+    private void nextPlayer() {
+        Console.WriteLine("\nTime's up ! ");
+        currentPlayer++;
+        playGame();
     }
 
 }
