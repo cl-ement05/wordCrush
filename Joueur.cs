@@ -34,9 +34,9 @@ public class Joueur {
         string s="";
         foreach (string element in motsTrouves)
         {
-            s+=" "+element;
+            s+=" "+element + ",";
         }
-        return "Voici le joueur 1 : "+nom+". Son score est de "+score+". La liste de mots trouvés est :"+s;
+        return "Player : "+nom+", you scored "+score+" using words :"+s;
     }
 
     /// <summary>

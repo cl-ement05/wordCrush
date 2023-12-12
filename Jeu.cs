@@ -5,6 +5,7 @@ public class Jeu {
     Joueur[] joueurs;
     int currentPlayer;
     bool play;
+    bool nextPlayerFlag;
     System.Timers.Timer playerTimer;
     System.Timers.Timer mainTimer;
 
@@ -20,6 +21,7 @@ public class Jeu {
         this.joueurs = joueurs;
         this.currentPlayer = 0;
         this.play = true;
+        this.nextPlayerFlag = false;
         System.Timers.Timer mainTimer = new System.Timers.Timer(duration);
         mainTimer.Elapsed += async (sender, e) => await end();
         mainTimer.AutoReset = false;
@@ -33,8 +35,9 @@ public class Jeu {
     public async Task end() {
         play = false;
         mainTimer.Stop();
-        mainTimer.Dispose();
+        mainTimer.Close();
         playerTimer.Stop();
+        playerTimer.Close();
         Console.WriteLine("\nGAME IS OVER");
         Console.WriteLine("Scores : ");
         List<Joueur> winners = new List<Joueur>() {joueurs[0]};
@@ -51,49 +54,65 @@ public class Jeu {
                 Console.Write(joueur.Nom + " ");
             }
         }
+        Console.WriteLine("Press ENTER to go to next game");
     }
 
     /// <summary>
     /// Main method for running game
     /// </summary>
     public void playGame() {
-        playerTimer = new System.Timers.Timer(10000);
-        playerTimer.Elapsed += async (sender, e) => await nextPlayer();
-        playerTimer.AutoReset = false;
-    
         while (play) {
+            playerTimer = new System.Timers.Timer(30000);
+            playerTimer.Elapsed += async (sender, e) => await nextPlayer();
+            playerTimer.AutoReset = false;
+            nextPlayerFlag = false;
+            
             playerTimer.Start();
             int nbrCurrent = currentPlayer % joueurs.Count();
-            Joueur currentJoueur = joueurs[nbrCurrent];
+            Joueur currentJoueur = getCurrentPlayer();
             Console.WriteLine("Next turn !");
             Console.WriteLine($"Player {nbrCurrent+1} : {currentJoueur.Nom} your turn !");
             Console.WriteLine("BOARD :");
             Console.WriteLine(board.toString() + "\n");
             Console.Write("Input word : ");
             string word = Console.ReadLine()!;
-            List<int[]> indexes = board.searchWord(word);
-            while (currentJoueur.Contient(word) || indexes.Count == 0 || !dictionnaire.RechDichoRecursif(word)) {
-                Console.Write($"{word} is not valid (already used, not in board, not in dictionary...) please input another word : ");
-                word = Console.ReadLine()!;
-                indexes = board.searchWord(word);
+            int toAdd = 0;
+            if (play && !nextPlayerFlag) {
+                List<int[]> indexes = board.searchWord(word);
+                while ((currentJoueur.Contient(word) || indexes.Count == 0 || !dictionnaire.RechDichoRecursif(word)) && play && !nextPlayerFlag) {
+                    Console.Write($"{word} is not valid (already used, not in board, not in dictionary...) please input another word : ");
+                    word = Console.ReadLine()!;
+                    indexes = board.searchWord(word);
+                }
+                if (play && !nextPlayerFlag) {
+                    toAdd = board.updateBoard(indexes);
+                    currentJoueur.Add_Score(toAdd);
+                    currentJoueur.Add_Mot(word);
+                }
+                
             }
 
-            int toAdd = board.updateBoard(indexes);
-            Console.WriteLine("\nNEW BOARD :");
-            Console.WriteLine(board.toString() + "\n");
-            currentJoueur.Add_Score(toAdd);
-            Console.WriteLine($"{currentJoueur.Nom} you scored {toAdd} ! Total score : {currentJoueur.Score}");
             currentPlayer++;
             playerTimer.Stop();
+            playerTimer.Close();
+            if (play && !nextPlayerFlag) {
+                Console.WriteLine($"{currentJoueur.Nom} you scored {toAdd} ! Total score : {currentJoueur.Score}");
+                Console.WriteLine($"{getCurrentPlayer().Nom} are you ready ? Press enter !");
+                Console.ReadLine();
+            }
 
         }
 
     }
 
     private async Task nextPlayer() {
-        Console.WriteLine("\nTime's up ! ");
-        currentPlayer++;
-        playGame();
+        Console.WriteLine($"\nTime's up for {getCurrentPlayer().Nom} ! Press enter ! ");
+        nextPlayerFlag = true;
+    }
+
+    private Joueur getCurrentPlayer() {
+        int nbrCurrent = currentPlayer % joueurs.Count();
+        return joueurs[nbrCurrent];
     }
 
 }

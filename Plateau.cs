@@ -176,7 +176,9 @@ public class Plateau {
                     indexes.Add(i);
                 }
             }
-            if (indexes.Count == 1) {
+            if (indexes.Count == 0) {
+                indexPath = new List<int[]>();
+            } else if (indexes.Count == 1) {
                 indexPath = searchWordRecursive(mot, 0, new List<int[]>(), lastLine, indexes[0]);
             } else {
                 int i = 0;
