@@ -125,7 +125,6 @@ public class Plateau {
     /// <param name="filename">filename used for saving board</param>
     /// <returns>Returns whether file export was successful or not</returns>
     public bool ToFile(string filename) {
-        tableau[3,3] = null;
         StreamWriter? streamWriter = null;
         bool success = true;
         try {
@@ -170,7 +169,7 @@ public class Plateau {
         mot = mot.ToUpper();
         List<int[]> indexPath = new List<int[]>();
         if (mot.Length >= 2) {
-            List<int> indexes = new List<int> {-1};
+            List<int> indexes = new List<int>();
             int lastLine = tableau.GetLength(0)-1;
             for (int i = 0; i < tableau.GetLength(1); i++) {
                 if (tableau[lastLine,i]!.Character == mot[0]) {

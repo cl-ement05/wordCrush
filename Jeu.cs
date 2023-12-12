@@ -38,9 +38,9 @@ public class Jeu {
         Console.WriteLine("\nGAME IS OVER");
         Console.WriteLine("Scores : ");
         List<Joueur> winners = new List<Joueur>() {joueurs[0]};
-        Console.WriteLine($"{joueurs[0].Nom} has scored {joueurs[0].Score} points; great job !");
+        Console.WriteLine(joueurs[0].toString());
         for (int i = 1; i < joueurs.Count(); i++) {
-            Console.WriteLine($"{joueurs[i].Nom} has scored {joueurs[i].Score} points; great job !");
+            Console.WriteLine(joueurs[i].toString());
             if (joueurs[i].Score > winners[0].Score) winners = new List<Joueur>() {joueurs[i]};
             else if (joueurs[i].Score == winners[0].Score) winners.Add(joueurs[i]);
         }
@@ -57,8 +57,8 @@ public class Jeu {
     /// Main method for running game
     /// </summary>
     public void playGame() {
-        playerTimer = new System.Timers.Timer(30000);
-        playerTimer.Elapsed += (sender, e) => nextPlayer();
+        playerTimer = new System.Timers.Timer(10000);
+        playerTimer.Elapsed += async (sender, e) => await nextPlayer();
         playerTimer.AutoReset = false;
     
         while (play) {
@@ -90,8 +90,9 @@ public class Jeu {
 
     }
 
-    private void nextPlayer() {
+    private async Task nextPlayer() {
         Console.WriteLine("\nTime's up ! ");
+        currentPlayer++;
         playGame();
     }
 
