@@ -21,7 +21,7 @@ public class Jeu {
         this.currentPlayer = 0;
         this.play = true;
         System.Timers.Timer mainTimer = new System.Timers.Timer(duration);
-        mainTimer.Elapsed += (sender, e) => end();
+        mainTimer.Elapsed += async (sender, e) => await end();
         mainTimer.AutoReset = false;
         mainTimer.Start();
         this.mainTimer = mainTimer;
@@ -30,7 +30,7 @@ public class Jeu {
     /// <summary>
     /// Call when you want to end game instance
     /// </summary>
-    public void end() {
+    public async Task end() {
         play = false;
         mainTimer.Stop();
         mainTimer.Dispose();
@@ -92,7 +92,6 @@ public class Jeu {
 
     private void nextPlayer() {
         Console.WriteLine("\nTime's up ! ");
-        currentPlayer++;
         playGame();
     }
 
