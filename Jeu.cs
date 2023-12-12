@@ -14,22 +14,23 @@ public class Jeu {
     /// <param name="dictionnaire">dico used in game</param>
     /// <param name="board">board used</param>
     /// <param name="joueurs">array of players</param>
-    public Jeu(Dictionnaire dictionnaire, Plateau board, Joueur[] joueurs) {
+    public Jeu(Dictionnaire dictionnaire, Plateau board, Joueur[] joueurs, int duration) {
         this.dictionnaire = dictionnaire;
         this.board = board;
         this.joueurs = joueurs;
         this.currentPlayer = 0;
         this.play = true;
-    }
-
-    public System.Timers.Timer MainTimer {
-        set { mainTimer = value; }
+        System.Timers.Timer mainTimer = new System.Timers.Timer(duration);
+        mainTimer.Elapsed += async (sender, e) => await end();
+        mainTimer.AutoReset = false;
+        mainTimer.Start();
+        this.mainTimer = mainTimer;
     }
 
     /// <summary>
     /// Call when you want to end game instance
     /// </summary>
-    public void end() {
+    public async Task end() {
         play = false;
         mainTimer.Stop();
         mainTimer.Dispose();
@@ -60,7 +61,7 @@ public class Jeu {
         playerTimer.Elapsed += (sender, e) => nextPlayer();
         playerTimer.AutoReset = false;
     
-        while (play) {            
+        while (play) {
             playerTimer.Start();
             int nbrCurrent = currentPlayer % joueurs.Count();
             Joueur currentJoueur = joueurs[nbrCurrent];
@@ -91,7 +92,6 @@ public class Jeu {
 
     private void nextPlayer() {
         Console.WriteLine("\nTime's up ! ");
-        currentPlayer++;
         playGame();
     }
 

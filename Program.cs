@@ -90,7 +90,6 @@ public class Program
 
     static Jeu gameInit(Lettre[,] tab, List<Joueur> joueurs, Dictionnaire dico) {
         Plateau board = new Plateau(tab);
-        Jeu game = new Jeu(dico, board, joueurs.ToArray());
         Console.WriteLine();
 
         Console.Write("Game duration ? (defaults to 5min) ");
@@ -105,11 +104,7 @@ public class Program
         Console.WriteLine("READY ?");
         Thread.Sleep(1000);
         Console.WriteLine("GO !");
-        System.Timers.Timer mainTimer = new System.Timers.Timer(duration);
-        mainTimer.Elapsed += (sender, e) => game.end();
-        mainTimer.AutoReset = false;
-        mainTimer.Start();
-        game.MainTimer = mainTimer;
+        Jeu game = new Jeu(dico, board, joueurs.ToArray(), duration);
         return game;
     }
 
