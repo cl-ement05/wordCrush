@@ -105,11 +105,19 @@ public class Jeu {
 
     }
 
+    /// <summary>
+    /// Async method ran when playerTimer goes off
+    /// </summary>
+    /// <returns></returns>
     private async Task nextPlayer() {
         Console.WriteLine($"\nTime's up for {getCurrentPlayer().Nom} ! Press enter ! ");
         nextPlayerFlag = true;
     }
 
+    /// <summary>
+    /// Get current player
+    /// </summary>
+    /// <returns>Returns instance of current player</returns>
     private Joueur getCurrentPlayer() {
         int nbrCurrent = currentPlayer % joueurs.Count();
         return joueurs[nbrCurrent];

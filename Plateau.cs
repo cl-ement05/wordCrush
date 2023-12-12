@@ -31,6 +31,10 @@ public class Plateau {
                     ['Z'] = 10,
                 };
 
+    public Lettre?[,] Tableau {
+        get { return this.tableau; }
+    }
+
     /// <summary>
     /// Native constructor for Plateau
     /// </summary>
@@ -238,7 +242,7 @@ public class Plateau {
 
     //indexPath.Any(k => k.SequenceEqual(new int[2] {i,j}))) return new List<int[]>();
 
-    private static bool EstDejaPasse(List<int[]> L, int[] tab)
+    public static bool EstDejaPasse(List<int[]> L, int[] tab)
     {
         bool b=true;
         bool c=false;
