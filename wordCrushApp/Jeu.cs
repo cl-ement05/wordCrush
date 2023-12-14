@@ -1,6 +1,7 @@
 using System.Windows.Documents;
 using System.Windows.Controls.Primitives;
 using System.Windows.Controls;
+using System.ComponentModel;
 
 namespace wordCrush {
 public class Jeu {
@@ -9,16 +10,11 @@ public class Jeu {
     Joueur[] joueurs;
     int currentPlayer;
     bool play;
-    bool nextPlayerFlag;
     System.Timers.Timer playerTimer;
     System.Timers.Timer mainTimer;
 
     public bool Play {
         get { return this.play; }
-    }
-    public bool NextPlayerFlag {
-        get { return this.nextPlayerFlag; }
-        set { this.nextPlayerFlag = value;}
     }
     public Joueur[] Joueurs {
         get { return this.joueurs; }
@@ -46,7 +42,7 @@ public class Jeu {
         this.joueurs = joueurs;
         this.currentPlayer = 0;
         this.play = true;
-        this.nextPlayerFlag = false;
+
         System.Timers.Timer mainTimer = new System.Timers.Timer(duration);
         mainTimer.Elapsed += async (sender, e) => await end();
         mainTimer.AutoReset = false;
@@ -87,18 +83,16 @@ public class Jeu {
     /// </summary>
     public void playGame(Run playerBox, List<Run> playerScores, System.Windows.Threading.Dispatcher d) {
         if (play) {
-            playerTimer = new System.Timers.Timer(10000);
+            playerTimer = new System.Timers.Timer(30000);
             playerTimer.AutoReset = false;
             playerTimer.Elapsed += async (sender, e) => {
                 
                 if (d.CheckAccess()) {
-                    popUpMainThread(playerBox);
+                    popUpMainThread(playerBox, playerScores, d);
                 } 
                 else
-                    await d.BeginInvoke(popUpMainThread, playerBox);
-                nextPlayerFlag = true;
+                    await d.BeginInvoke(popUpMainThread, playerBox, playerScores, d);
             };
-            nextPlayerFlag = false;
             
             playerTimer.Start();
             int nbrCurrent = currentPlayer % joueurs.Count();
@@ -116,10 +110,10 @@ public class Jeu {
     public int tryProcessInput(string word) {
         Joueur currentJoueur = getCurrentPlayer();
         int toAdd = -1;
-        if (play && !nextPlayerFlag) {
+        if (play) {
             List<int[]> indexes = board.searchWord(word);
 
-            if (!currentJoueur.Contient(word) && indexes.Count != 0 && dictionnaire.RechDichoRecursif(word) && play && !nextPlayerFlag) {
+            if (!currentJoueur.Contient(word) && indexes.Count != 0 && dictionnaire.RechDichoRecursif(word) && play) {
                 toAdd = board.updateBoard(indexes);
                 currentJoueur.Add_Score(toAdd);
                 currentJoueur.Add_Mot(word);
@@ -138,12 +132,15 @@ public class Jeu {
         return joueurs[nbrCurrent];
     }
 
-    public void popUpMainThread(Run text) {
-        Popup codePopup = new Popup();
-        TextBlock popupText = new TextBlock();
-        popupText.Text = $"Time's up for {getCurrentPlayer().Nom} ! Press enter !";
-        codePopup.Child = popupText;
-        codePopup.IsOpen = true;
+    public void popUpMainThread(Run playerBox, List<Run> playerScores, System.Windows.Threading.Dispatcher d) {
+        PopupWindow popupWindow = new PopupWindow(getCurrentPlayer().Nom);
+        popupWindow.Closing += (object? sender, CancelEventArgs eventArgs) => {
+            currentPlayer++;
+            playerTimer.Stop();
+            playerTimer.Close();
+            playGame(playerBox, playerScores, d);
+        };
+        popupWindow.ShowDialog();
     }
 
 }
