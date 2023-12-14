@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace wordCrush {
 public class Plateau {
     readonly Lettre?[,] tableau;
