@@ -127,6 +127,11 @@ namespace wordCrush
                 
                 game.playGame(currentPlayerText, playerRuns, Application.Current.Dispatcher);
 
+                this.Closed += (object? sender, EventArgs e) => {
+                    game.PlayerTimer.Stop();
+                    game.gameOverMainThread();
+                }; 
+
 
                 // Console.Write("Continue with file mode ? (y/N) ");
                 // cmd = Console.ReadLine()!;

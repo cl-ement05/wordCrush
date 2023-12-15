@@ -31,9 +31,9 @@ namespace wordCrush
             TextBlock status = new TextBlock();
             TextBlock timesTitle = new TextBlock();
             TextBox partyTime = new TextBox();
-            partyTime.Text = "Party time (sec)";
+            partyTime.Text = "180";
             TextBox lapTime = new TextBox();
-            lapTime.Text = "Lap time (sec)";
+            lapTime.Text = "30";
             Button startGame = new Button();
             Button switchGame = new Button();
             TextBlock gameMode = new TextBlock();
@@ -66,7 +66,7 @@ namespace wordCrush
                     status.Foreground = Brushes.Green;
                     sendPlayerNames.Visibility = Visibility.Hidden;
 
-                    timesTitle.Text = "Please input party time and lap time";
+                    timesTitle.Text = "Please input party time and lap time (sec)";
                     section.Blocks.Add(new Paragraph(new InlineUIContainer(timesTitle)));
                     partyTime.MinWidth = 20;
                     lapTime.MinWidth = 20;
