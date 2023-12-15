@@ -70,7 +70,6 @@ namespace wordCrush
                 BlockUIContainer inputGrid = new BlockUIContainer();
                 inputGrid.Margin = new Thickness(50);
                 TextBox textBox = new TextBox();
-                textBox.Text = "Word input";
                 inputGrid.Child = textBox;
                 inputGrid.TextAlignment = TextAlignment.Center;
 
@@ -123,7 +122,6 @@ namespace wordCrush
                 this.Content = flowDoc;
 
                 textBox.Focus();
-                textBox.Select(0, textBox.Text.Length);
                 
                 game.playGame(currentPlayerText, playerRuns, Application.Current.Dispatcher);
 
@@ -200,7 +198,7 @@ namespace wordCrush
                 } else {
                     statusText.Text = $"{textBox.Text} is not valid (already used, not in board, not in dictionary...) please input another word";
                     statusText.Foreground = Brushes.Red;
-                    
+                    textBox.Select(0, textBox.Text.Length);
                 }
             }
         }
