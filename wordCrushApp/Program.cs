@@ -92,7 +92,7 @@ public class Program
         Plateau board = new Plateau(tab);
         Console.WriteLine();
 
-        Console.Write("Game duration ? (defaults to 5min) ");
+        Console.Write("Game duration (min) ? (defaults to 5min) ");
         string rep = Console.ReadLine()!;
         int duration;
         try {
@@ -101,10 +101,19 @@ public class Program
             duration = 300000;
             Console.WriteLine("Using default value...");
         }
+        Console.Write("Lap duration (sec) ? (defaults to 30sec) ");
+        rep = Console.ReadLine()!;
+        int lapTime;
+        try {
+            lapTime = int.Parse(rep) * 1000;
+        } catch (Exception) {
+            lapTime = 30000;
+            Console.WriteLine("Using default value...");
+        }
         Console.WriteLine("READY ?");
         Thread.Sleep(1000);
         Console.WriteLine("GO !");
-        Jeu game = new Jeu(dico, board, joueurs.ToArray(), duration);
+        Jeu game = new Jeu(dico, board, joueurs.ToArray(), duration, lapTime);
         return game;
     }
 

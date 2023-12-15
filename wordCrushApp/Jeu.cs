@@ -8,6 +8,7 @@ public class Jeu {
     bool nextPlayerFlag;
     System.Timers.Timer playerTimer;
     System.Timers.Timer mainTimer;
+    int lapTime;
 
     /// <summary>
     /// Native constructor for Jeu
@@ -15,13 +16,14 @@ public class Jeu {
     /// <param name="dictionnaire">dico used in game</param>
     /// <param name="board">board used</param>
     /// <param name="joueurs">array of players</param>
-    public Jeu(Dictionnaire dictionnaire, Plateau board, Joueur[] joueurs, int duration) {
+    public Jeu(Dictionnaire dictionnaire, Plateau board, Joueur[] joueurs, int duration, int lapTime) {
         this.dictionnaire = dictionnaire;
         this.board = board;
         this.joueurs = joueurs;
         this.currentPlayer = 0;
         this.play = true;
         this.nextPlayerFlag = false;
+        this.lapTime = lapTime;
         System.Timers.Timer mainTimer = new System.Timers.Timer(duration);
         mainTimer.Elapsed += async (sender, e) => await end();
         mainTimer.AutoReset = false;
@@ -62,7 +64,7 @@ public class Jeu {
     /// </summary>
     public void playGame() {
         while (play) {
-            playerTimer = new System.Timers.Timer(30000);
+            playerTimer = new System.Timers.Timer(lapTime);
             playerTimer.Elapsed += async (sender, e) => await nextPlayer();
             playerTimer.AutoReset = false;
             nextPlayerFlag = false;
