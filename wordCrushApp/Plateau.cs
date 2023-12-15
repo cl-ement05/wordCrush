@@ -178,7 +178,7 @@ public class Plateau {
             List<int> indexes = new List<int>();
             int lastLine = tableau.GetLength(0)-1;
             for (int i = 0; i < tableau.GetLength(1); i++) {
-                if (tableau[lastLine,i]!.Character == mot[0]) {
+                if (tableau[lastLine,i]?.Character == mot[0]) {
                     indexes.Add(i);
                 }
             }
@@ -209,7 +209,7 @@ public class Plateau {
     /// <returns>Returns sorted list of letter indexes if word was found, else empty list</returns>
     private List<int[]> searchWordRecursive(string mot, int index, List<int[]> indexPath, int i, int j) {
         try {
-            if (mot[index] != tableau[i,j]!.Character || EstDejaPasse(indexPath, new int[] {i, j})) return new List<int[]>();
+            if (mot[index] != tableau[i,j]?.Character || EstDejaPasse(indexPath, new int[] {i, j})) return new List<int[]>();
             else if (index != mot.Length-1) {
                 List<int[]> newPath = indexPath.Concat(new List<int[]> {new int[2] {i,j}}).ToList();
                 List<int[]> vert = searchWordRecursive(mot, index + 1, newPath, i - 1, j);

@@ -42,9 +42,12 @@ namespace wordCrush
             switchGame.Content = "Switch to random board mode";
             switchGame.Click += (object sender, RoutedEventArgs e) => {
                 gameMode.Text = "Random board mode";
+                switchGame.IsEnabled = false;
                 randomMode = true;
             };
             Section section = new Section();
+            Button close = new Button();
+            section.Blocks.Add(new Paragraph(new InlineUIContainer(close)));
 
             Button sendPlayerNames = new Button();
             sendPlayerNames.Content = "Save player names";
@@ -102,6 +105,11 @@ namespace wordCrush
             
             TextBlock nbrPlayersTitle = new TextBlock(new Run("Number of players :"));
             TextBox nbrPlayersBox = new TextBox();
+            nbrPlayersBox.KeyDown += (object sender, KeyEventArgs e) => {
+                if (e.Key == Key.Enter) {
+
+                }
+            };
             nbrPlayersBox.MinWidth = 20;
             Button buttonNbrPlayers = new Button();
             buttonNbrPlayers.Content = "Save";
@@ -126,6 +134,12 @@ namespace wordCrush
             section.Blocks.Add(new Paragraph(new InlineUIContainer(nbrPlayersTitle)));
             section.Blocks.Add(new Paragraph(new InlineUIContainer(nbrPlayersBox)));
             section.Blocks.Add(new Paragraph(new InlineUIContainer(buttonNbrPlayers)));
+
+            close.Content = "Close";
+            close.Padding = new Thickness(2);
+            close.Click += (object sender, RoutedEventArgs e) => {
+                Environment.Exit(0);
+            };
 
 
             flowDoc.Blocks.Add(section);

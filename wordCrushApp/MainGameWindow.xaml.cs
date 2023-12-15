@@ -32,8 +32,8 @@ namespace wordCrush
 
                 Dictionnaire dico = dicoInit();
                 Lettre[,] tab = new Lettre[0,0];
-                tab = Plateau.createRandomBoard("Lettre.txt", 8);
-                Console.WriteLine("Board successfully imported ! \n");
+                if (randomMode) tab = Plateau.createRandomBoard("Lettre.txt", 8);
+                else tab = Plateau.fetchBoardFromFile(savedBoardFile);
 
                 FlowDocument flowDoc = new FlowDocument();
                 Table table1 = new Table();
@@ -43,19 +43,18 @@ namespace wordCrush
                 table1.BorderBrush = Brushes.Black;
                 table1.BorderThickness = new Thickness(2);
                 table1.TextAlignment = TextAlignment.Center;
-                int numberOfColumns = 8;
-                for (int x = 0; x < numberOfColumns; x++)
+                for (int x = 0; x < tab.GetLength(1); x++)
                 {
                     table1.Columns.Add(new TableColumn());
                 }
                 table1.RowGroups.Add(new TableRowGroup());
-                Run[,] tableCells = new Run[8,8];
-                for (int i = 0; i < 8; i++) {
+                Run[,] tableCells = new Run[tab.GetLength(0),tab.GetLength(1)];
+                for (int i = 0; i < tab.GetLength(0); i++) {
                     table1.RowGroups[0].Rows.Add(new TableRow());
                     TableRow currentRow = table1.RowGroups[0].Rows[i];
                     currentRow.FontSize = 20;
                     currentRow.FontWeight = FontWeights.Normal;
-                    for (int j = 0; j < 8; j++) {
+                    for (int j = 0; j < tab.GetLength(1); j++) {
                         tableCells[i,j] = new Run();
                         TableCell tableCell = new TableCell(new Paragraph(tableCells[i,j]));
                         tableCell.BorderBrush = Brushes.Black;
@@ -97,27 +96,15 @@ namespace wordCrush
                     paragraphScoreBoard.Inlines.Add(run);
                 }
 
+                textBox.KeyDown += (object sender, KeyEventArgs e) => {
+                    if (e.Key == Key.Enter) processInput(statusText, game, currentPlayerText, playerRuns, tableCells, textBox);
+                };
                 Paragraph buttonPara = new Paragraph();
                 Button button = new Button();
                 button.Content = "Send";
                 button.Padding = new Thickness(2);
                 button.Click += (object sender, RoutedEventArgs e) => {
-                    int result = game.tryProcessInput(textBox.Text);
-                    if(result != -1) {
-                        statusText.Text = "Great job !";
-                        statusPara.Foreground = Brushes.Green;
-                        game.CurrentPlayer++;
-                        game.PlayerTimer.Stop();
-                        game.PlayerTimer.Close();
-                        game.playGame(currentPlayerText, playerRuns, Application.Current.Dispatcher);
-                        updateBoardDisplay(tableCells, game.Board);
-                        textBox.Clear();
-
-                    } else {
-                        statusText.Text = $"{textBox.Text} is not valid (already used, not in board, not in dictionary...) please input another word";
-                        statusPara.Foreground = Brushes.Red;
-                        
-                    }
+                    processInput(statusText, game, currentPlayerText, playerRuns, tableCells, textBox);
                 };
                 InlineUIContainer inlineUIContainer = new InlineUIContainer();
                 inlineUIContainer.Child = button;
@@ -180,8 +167,8 @@ namespace wordCrush
             }
 
             static void updateBoardDisplay(Run[,] tableCells, Plateau plateau) {
-                for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++) {
+                for (int i = 0; i < tableCells.GetLength(0); i++) {
+                    for (int j = 0; j < tableCells.GetLength(1); j++) {
                         tableCells[i,j].Text = plateau.Tableau[i,j]?.toString() ?? " ";
                     }
                     
@@ -191,6 +178,25 @@ namespace wordCrush
             static Dictionnaire dicoInit() {
                 Dictionnaire dico = new Dictionnaire("FR", "mots.txt");
                 return dico;
+            }
+
+            void processInput(Run statusText, Jeu game, Run currentPlayerText, List<Run> playerRuns, Run[,] tableCells, TextBox textBox) {
+                int result = game.tryProcessInput(textBox.Text);
+                if(result != -1) {
+                    statusText.Text = "Great job !";
+                    statusText.Foreground = Brushes.Green;
+                    game.CurrentPlayer++;
+                    game.PlayerTimer.Stop();
+                    game.PlayerTimer.Close();
+                    game.playGame(currentPlayerText, playerRuns, Application.Current.Dispatcher);
+                    updateBoardDisplay(tableCells, game.Board);
+                    textBox.Clear();
+
+                } else {
+                    statusText.Text = $"{textBox.Text} is not valid (already used, not in board, not in dictionary...) please input another word";
+                    statusText.Foreground = Brushes.Red;
+                    
+                }
             }
         }
     }
