@@ -36,7 +36,7 @@ public class Jeu {
     /// <param name="dictionnaire">dico used in game</param>
     /// <param name="board">board used</param>
     /// <param name="joueurs">array of players</param>
-    public Jeu(Dictionnaire dictionnaire, Plateau board, Joueur[] joueurs, int duration) {
+    public Jeu(Dictionnaire dictionnaire, Plateau board, Joueur[] joueurs, int duration, System.Windows.Threading.Dispatcher d) {
         this.dictionnaire = dictionnaire;
         this.board = board;
         this.joueurs = joueurs;
@@ -44,38 +44,17 @@ public class Jeu {
         this.play = true;
 
         System.Timers.Timer mainTimer = new System.Timers.Timer(duration);
-        mainTimer.Elapsed += async (sender, e) => await end();
+        mainTimer.Elapsed += async (sender, e) => {
+                
+            if (d.CheckAccess()) {
+                gameOverMainThread();
+            } 
+            else
+                await d.BeginInvoke(gameOverMainThread);
+        };
         mainTimer.AutoReset = false;
         mainTimer.Start();
         this.mainTimer = mainTimer;
-    }
-
-    /// <summary>
-    /// Call when you want to end game instance
-    /// </summary>
-    public async Task end() {
-        play = false;
-        mainTimer.Stop();
-        mainTimer.Close();
-        playerTimer.Stop();
-        playerTimer.Close();
-        Console.WriteLine("\nGAME IS OVER");
-        Console.WriteLine("Scores : ");
-        List<Joueur> winners = new List<Joueur>() {joueurs[0]};
-        Console.WriteLine(joueurs[0].toString());
-        for (int i = 1; i < joueurs.Count(); i++) {
-            Console.WriteLine(joueurs[i].toString());
-            if (joueurs[i].Score > winners[0].Score) winners = new List<Joueur>() {joueurs[i]};
-            else if (joueurs[i].Score == winners[0].Score) winners.Add(joueurs[i]);
-        }
-        if (winners.Count == 1) Console.WriteLine($"{winners[0].Nom} wins the game !");
-        else {
-            Console.Write("Tie ! Winners are : ");
-            foreach(Joueur joueur in winners) {
-                Console.Write(joueur.Nom + " ");
-            }
-        }
-        Console.WriteLine("Press ENTER to go to next game");
     }
 
     /// <summary>
@@ -83,7 +62,7 @@ public class Jeu {
     /// </summary>
     public void playGame(Run playerBox, List<Run> playerScores, System.Windows.Threading.Dispatcher d) {
         if (play) {
-            playerTimer = new System.Timers.Timer(30000);
+            playerTimer = new System.Timers.Timer(10000);
             playerTimer.AutoReset = false;
             playerTimer.Elapsed += async (sender, e) => {
                 
@@ -141,6 +120,19 @@ public class Jeu {
             playGame(playerBox, playerScores, d);
         };
         popupWindow.ShowDialog();
+    }
+
+    public void gameOverMainThread() {
+        play = false;
+        mainTimer.Stop();
+        mainTimer.Close();
+        playerTimer.Stop();
+        playerTimer.Close();
+        GameoverWindow gameoverWindow = new GameoverWindow(joueurs.ToList());
+        bool? result = gameoverWindow.ShowDialog();
+        if (result == false) {
+             Environment.Exit(0);
+        }
     }
 
 }

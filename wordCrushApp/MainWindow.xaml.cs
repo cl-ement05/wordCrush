@@ -177,11 +177,9 @@ namespace wordCrush
 
             static Jeu gameInit(Lettre[,] tab, List<Joueur> joueurs, Dictionnaire dico) {
                 Plateau board = new Plateau(tab);
-                Console.WriteLine();
 
-                string rep = Console.ReadLine()!;
-                int duration = 300000;
-                Jeu game = new Jeu(dico, board, joueurs.ToArray(), duration);
+                int duration = 60000;
+                Jeu game = new Jeu(dico, board, joueurs.ToArray(), duration, Application.Current.Dispatcher);
                 return game;
             }
 
@@ -196,7 +194,6 @@ namespace wordCrush
 
             static Dictionnaire dicoInit() {
                 Dictionnaire dico = new Dictionnaire("FR", "mots.txt");
-                Console.WriteLine("Dictionary successfully imported !\n");
                 return dico;
             }
         }
