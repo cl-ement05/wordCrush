@@ -24,8 +24,37 @@ public class Program
         }
         Console.WriteLine();
 
-        Console.Write("Continue with random board mode ? (y/N) ");
+        Console.Write("Continue with file mode ? (y/N) ");
         string cmd = Console.ReadLine()!;
+        while (cmd == "y") {
+            Lettre[,] tab = new Lettre[0,0];
+            Dictionnaire dico = dicoInit();
+            while (tab.GetLength(0) == 0) {
+                Console.WriteLine("Saved board mode selected");
+                Console.Write("Board filename : ");
+                string filename = Console.ReadLine()!;
+                Console.Write("Do you want to provide letters score file ? (y/N) ");
+                string answer = Console.ReadLine()!;
+                string lettersScoreFile = "";
+                if (answer == "y") {
+                    Console.Write("Letters score filename : ");
+                    lettersScoreFile = Console.ReadLine()!;
+                }
+                tab = Plateau.fetchBoardFromFile(filename, lettersScoreFile);
+            }
+            Console.WriteLine("Board successfully imported ! \n");
+
+            Jeu game = gameInit(tab, joueurs, dico);
+            
+            game.playGame();
+
+            Console.Write("Continue with random mode ? (y/N) ");
+            cmd = Console.ReadLine()!;
+        }
+        Console.WriteLine("Switching to random mode"); 
+
+        Console.Write("Continue with random board mode ? (y/N) ");
+        cmd = Console.ReadLine()!;
         while (cmd == "y") {
             Dictionnaire dico = dicoInit();
             Lettre[,] tab = new Lettre[0,0];
@@ -44,35 +73,6 @@ public class Program
                 finally {
                     tab = Plateau.createRandomBoard(filename, size);
                 }
-            }
-            Console.WriteLine("Board successfully imported ! \n");
-
-            Jeu game = gameInit(tab, joueurs, dico);
-            
-            game.playGame();
-
-            Console.Write("Continue with random mode ? (y/N) ");
-            cmd = Console.ReadLine()!;
-        }
-        Console.WriteLine("Switching to file mode"); 
-
-        Console.Write("Continue with file mode ? (y/N) ");
-        cmd = Console.ReadLine()!;
-        while (cmd == "y") {
-            Lettre[,] tab = new Lettre[0,0];
-            Dictionnaire dico = dicoInit();
-            while (tab.GetLength(0) == 0) {
-                Console.WriteLine("Saved board mode selected");
-                Console.Write("Board filename : ");
-                string filename = Console.ReadLine()!;
-                Console.Write("Do you want to provide letters score file ? (y/N) ");
-                string answer = Console.ReadLine()!;
-                string lettersScoreFile = "";
-                if (answer == "y") {
-                    Console.Write("Letters score filename : ");
-                    lettersScoreFile = Console.ReadLine()!;
-                }
-                tab = Plateau.fetchBoardFromFile(filename, lettersScoreFile);
             }
             Console.WriteLine("Board successfully imported ! \n");
 
