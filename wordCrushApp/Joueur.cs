@@ -36,7 +36,7 @@ public class Joueur {
         {
             s+=" "+element + ",";
         }
-        return "Player : "+nom+", you scored "+score+" using words :"+s;
+        return nom+", you scored "+score+" using words :"+s;
     }
 
     /// <summary>

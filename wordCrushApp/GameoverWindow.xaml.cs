@@ -57,29 +57,13 @@ namespace wordCrush
             closeButton.Content = "Close";
             closeButton.Padding = new Thickness(2);
             closeButton.Click += (object sender, RoutedEventArgs e) => {
-                this.DialogResult = false;
                 this.Close();
             };
             InlineUIContainer inlineUIContainer = new InlineUIContainer();
             inlineUIContainer.Child = closeButton;
-            Button nextButton = new Button();
-            nextButton.Content = "Play again";
-            nextButton.Padding = new Thickness(2);
-            nextButton.Click += (object sender, RoutedEventArgs e) => {
-                this.DialogResult = true;
-                this.Close();
-            };
-            InlineUIContainer inlineUIContainer2 = new InlineUIContainer();
-            inlineUIContainer2.Child = nextButton;
             ButtonPara.TextAlignment = TextAlignment.Center;
             ButtonPara.Inlines.Add(inlineUIContainer);
-            Separator sep = new Separator();
-            sep.MinWidth = 50;
-            sep.Foreground = Brushes.White;
-            sep.BorderBrush = Brushes.White;
-            sep.Opacity = 0;
-            ButtonPara.Inlines.Add(sep);
-            ButtonPara.Inlines.Add(inlineUIContainer2);
+
             
 
             flowDoc.Blocks.Add(paragraphTitle);

@@ -23,179 +23,135 @@ namespace wordCrush
         public MainWindow()
         {
             InitializeComponent();
-                AppDomain.CurrentDomain.UnhandledException += (s,args)=>{
-       MessageBox.Show("Unhandled Exception: "+args.ExceptionObject);
-    };
-            Main();
+            FlowDocument flowDoc = new FlowDocument();
+            int nbrPlayers = -1;
+            string nbPlayers = "";
+            TextBox[] nameTextBoxes = new TextBox[2];
+            List<Joueur> joueurs = new List<Joueur>();
+            TextBlock status = new TextBlock();
+            TextBlock timesTitle = new TextBlock();
+            TextBox partyTime = new TextBox();
+            partyTime.Text = "Party time (sec)";
+            TextBox lapTime = new TextBox();
+            lapTime.Text = "Lap time (sec)";
+            Button startGame = new Button();
+            Button switchGame = new Button();
+            TextBlock gameMode = new TextBlock();
+            bool randomMode = false;
+            gameMode.Text = "Saved board mode";
+            switchGame.Content = "Switch to random board mode";
+            switchGame.Click += (object sender, RoutedEventArgs e) => {
+                gameMode.Text = "Random board mode";
+                randomMode = true;
+            };
+            Section section = new Section();
 
-            void Main() {
-                List<Joueur> joueurs = new List<Joueur>();
-                Joueur clem = new Joueur("Clément");
-                Joueur alban = new Joueur("Alban");
-                joueurs.Add(clem);
-                joueurs.Add(alban);
-
-                Dictionnaire dico = dicoInit();
-                Lettre[,] tab = new Lettre[0,0];
-                tab = Plateau.createRandomBoard("Lettre.txt", 8);
-                Console.WriteLine("Board successfully imported ! \n");
-
-                FlowDocument flowDoc = new FlowDocument();
-                Table table1 = new Table();
-                
-                table1.CellSpacing = 0;
-                table1.Background = Brushes.White;
-                table1.BorderBrush = Brushes.Black;
-                table1.BorderThickness = new Thickness(2);
-                table1.TextAlignment = TextAlignment.Center;
-                int numberOfColumns = 8;
-                for (int x = 0; x < numberOfColumns; x++)
-                {
-                    table1.Columns.Add(new TableColumn());
+            Button sendPlayerNames = new Button();
+            sendPlayerNames.Content = "Save player names";
+            sendPlayerNames.Padding = new Thickness(2);
+            sendPlayerNames.Click += (object sender, RoutedEventArgs e) => {
+                bool pass = true;
+                foreach(TextBox textBox in nameTextBoxes) {
+                    if (textBox.Text.Length == 0) pass = false; 
                 }
-                table1.RowGroups.Add(new TableRowGroup());
-                Run[,] tableCells = new Run[8,8];
-                for (int i = 0; i < 8; i++) {
-                    table1.RowGroups[0].Rows.Add(new TableRow());
-                    TableRow currentRow = table1.RowGroups[0].Rows[i];
-                    currentRow.FontSize = 20;
-                    currentRow.FontWeight = FontWeights.Normal;
-                    for (int j = 0; j < 8; j++) {
-                        tableCells[i,j] = new Run();
-                        TableCell tableCell = new TableCell(new Paragraph(tableCells[i,j]));
-                        tableCell.BorderBrush = Brushes.Black;
-                        tableCell.BorderThickness = new Thickness(2);
-                        currentRow.Cells.Add(tableCell);
+                if (pass) {
+                    foreach(TextBox textBox in nameTextBoxes) {
+                        joueurs.Add(new Joueur(textBox.Text));
+                        textBox.IsEnabled = false;
                     }
-                    
+                    status.Text = "Player names saved";
+                    status.Foreground = Brushes.Green;
+                    sendPlayerNames.Visibility = Visibility.Hidden;
+
+                    timesTitle.Text = "Please input party time and lap time";
+                    section.Blocks.Add(new Paragraph(new InlineUIContainer(timesTitle)));
+                    partyTime.MinWidth = 20;
+                    lapTime.MinWidth = 20;
+                    section.Blocks.Add(new Paragraph(new InlineUIContainer(partyTime)));
+                    section.Blocks.Add(new Paragraph(new InlineUIContainer(lapTime)));
+                    startGame.Content = "Play !";
+                    startGame.Padding = new Thickness(2);
+                    section.Blocks.Add(new Paragraph(new InlineUIContainer(gameMode)));
+                    section.Blocks.Add(new Paragraph(new InlineUIContainer(switchGame)));
+                    section.Blocks.Add(new Paragraph(new InlineUIContainer(startGame)));
                 }
 
-                Jeu game = gameInit(tab, joueurs, dico);
-                updateBoardDisplay(tableCells, game.Board);
+                else {
+                    status.Text = "Please enter non-empty names";
+                    status.Foreground = Brushes.Red;
+                }
 
-                BlockUIContainer inputGrid = new BlockUIContainer();
-                inputGrid.Margin = new Thickness(50);
+            };
+
+            int partyTimeVal = 0;
+            int lapTimeVal = 0;
+            startGame.Click += (object sender, RoutedEventArgs e) => {
+                try {
+                    partyTimeVal = int.Parse(partyTime.Text);
+                    lapTimeVal = int.Parse(lapTime.Text);
+                    if (partyTimeVal <= 0 || lapTimeVal <= 0 || partyTimeVal <= lapTimeVal) throw new ArgumentException();
+                    MainGameWindow mainGameWindow = new MainGameWindow(joueurs, partyTimeVal*1000, lapTimeVal*1000, randomMode, "plateau.csv");
+                    this.Visibility = Visibility.Hidden;
+                    mainGameWindow.ShowDialog();
+                    this.Visibility = Visibility.Visible;
+                } catch (Exception) {
+                    status.Text = "Enter > 0 integer and ensure party time > lap time";
+                    status.Foreground = Brushes.Red;
+                }
+            };
+            
+            TextBlock nbrPlayersTitle = new TextBlock(new Run("Number of players :"));
+            TextBox nbrPlayersBox = new TextBox();
+            nbrPlayersBox.MinWidth = 20;
+            Button buttonNbrPlayers = new Button();
+            buttonNbrPlayers.Content = "Save";
+            buttonNbrPlayers.Padding = new Thickness(2);
+            buttonNbrPlayers.Click += (object sender, RoutedEventArgs e) => { 
+                nbPlayers = nbrPlayersBox.Text;
+                try {
+                    nbrPlayers = int.Parse(nbPlayers);
+                    if (nbrPlayers <= 0) throw new ArgumentException();
+                    status.Text = $"{nbrPlayers} players saved";
+                    status.Foreground = Brushes.Green;
+                    nameTextBoxes = playersNameBoxes(section, nbrPlayers);
+                    section.Blocks.Add(new Paragraph(new InlineUIContainer(sendPlayerNames)));
+                    buttonNbrPlayers.Visibility = Visibility.Hidden;
+                    nbrPlayersBox.IsEnabled = false;
+                } catch (Exception) {
+                    status.Text = "Please enter > 0 integer";
+                    status.Foreground = Brushes.Red;
+                }
+            };
+            section.Blocks.Add(new Paragraph(new InlineUIContainer(status)));
+            section.Blocks.Add(new Paragraph(new InlineUIContainer(nbrPlayersTitle)));
+            section.Blocks.Add(new Paragraph(new InlineUIContainer(nbrPlayersBox)));
+            section.Blocks.Add(new Paragraph(new InlineUIContainer(buttonNbrPlayers)));
+
+
+            flowDoc.Blocks.Add(section);
+            section.TextAlignment = TextAlignment.Center;
+            this.Content = flowDoc;
+            nbrPlayersBox.Focus();
+        }
+
+        public TextBox[] playersNameBoxes(Section section, int nbrPlayers) {
+            TextBox[] textBoxes = new TextBox[nbrPlayers];
+            for (int i = 0; i < nbrPlayers; i++) {
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(new Run("Name of player N°"+(i+1)));
+                Separator sep = new Separator();
+                sep.MinWidth = 30;
+                sep.Foreground = Brushes.White;
+                sep.BorderBrush = Brushes.White;
+                sep.Opacity = 0;
+                para.Inlines.Add(sep);
                 TextBox textBox = new TextBox();
-                textBox.Text = "Word input";
-                inputGrid.Child = textBox;
-                inputGrid.TextAlignment = TextAlignment.Center;
-
-                Paragraph statusPara = new Paragraph();
-                Run statusText = new Run();
-                statusText.FontSize = 17;
-                statusPara.Inlines.Add(statusText);
-                statusPara.TextAlignment = TextAlignment.Center;
-
-                Paragraph playerPara = new Paragraph();
-                Run currentPlayerText = new Run(game.getCurrentPlayer().Nom);
-                playerPara.Inlines.Add(currentPlayerText);
-                Paragraph paragraphScoreBoard = new Paragraph();
-                List<Run> playerRuns = new List<Run>();
-                Joueur[] gamePlayers = game.Joueurs;
-                foreach (Joueur joueur in gamePlayers) {
-                    Run run = new Run(joueur.Nom + " : 0 ; ");
-                    playerRuns.Add(run);
-                }
-                Paragraph paragraphScores = new Paragraph();
-                paragraphScores.Inlines.Add(new Run("Scores :"));
-                foreach(Run run in playerRuns) {
-                    paragraphScoreBoard.Inlines.Add(run);
-                }
-
-                Paragraph buttonPara = new Paragraph();
-                Button button = new Button();
-                button.Content = "Send";
-                button.Padding = new Thickness(2);
-                button.Click += (object sender, RoutedEventArgs e) => {
-                    int result = game.tryProcessInput(textBox.Text);
-                    if(result != -1) {
-                        statusText.Text = "Great job !";
-                        statusPara.Foreground = Brushes.Green;
-                        game.CurrentPlayer++;
-                        game.PlayerTimer.Stop();
-                        game.PlayerTimer.Close();
-                        game.playGame(currentPlayerText, playerRuns, Application.Current.Dispatcher);
-                        updateBoardDisplay(tableCells, game.Board);
-
-                    } else {
-                        statusText.Text = $"{textBox.Text} is not valid (already used, not in board, not in dictionary...) please input another word";
-                        statusPara.Foreground = Brushes.Red;
-                    }
-                };
-                InlineUIContainer inlineUIContainer = new InlineUIContainer();
-                inlineUIContainer.Child = button;
-                buttonPara.TextAlignment = TextAlignment.Center;
-                buttonPara.Inlines.Add(inlineUIContainer);
-
-                
-                flowDoc.Blocks.Add(playerPara);
-                flowDoc.Blocks.Add(paragraphScores);
-                flowDoc.Blocks.Add(paragraphScoreBoard);
-                flowDoc.Blocks.Add(table1);
-                flowDoc.Blocks.Add(inputGrid);
-                flowDoc.Blocks.Add(buttonPara);
-                flowDoc.Blocks.Add(statusPara);
-
-                this.Content = flowDoc;
-
-                textBox.Focus();
-                textBox.Select(0, textBox.Text.Length);
-                
-                game.playGame(currentPlayerText, playerRuns, Application.Current.Dispatcher);
-
-
-                // Console.Write("Continue with file mode ? (y/N) ");
-                // cmd = Console.ReadLine()!;
-                // while (cmd == "y") {
-                //     Lettre[,] tab = new Lettre[0,0];
-                //     Dictionnaire dico = dicoInit();
-                //     while (tab.GetLength(0) == 0) {
-                //         Console.WriteLine("Saved board mode selected");
-                //         Console.Write("Board filename : ");
-                //         string filename = Console.ReadLine()!;
-                //         Console.Write("Do you want to provide letters score file ? (y/N) ");
-                //         string answer = Console.ReadLine()!;
-                //         string lettersScoreFile = "";
-                //         if (answer == "y") {
-                //             Console.Write("Letters score filename : ");
-                //             lettersScoreFile = Console.ReadLine()!;
-                //         }
-                //         tab = Plateau.fetchBoardFromFile(filename, lettersScoreFile);
-                //     }
-                //     Console.WriteLine("Board successfully imported ! \n");
-
-                //     Jeu game = gameInit(tab, joueurs, dico);
-                    
-                //     game.playGame();
-
-                //     Console.Write("Continue with random mode ? (y/N) ");
-                //     cmd = Console.ReadLine()!;
-                // }
-
-                // Console.WriteLine("Bye");
+                textBox.MinWidth = 100;
+                textBoxes[i] = textBox;
+                para.Inlines.Add(textBox);
+                section.Blocks.Add(para);
             }
-
-            static Jeu gameInit(Lettre[,] tab, List<Joueur> joueurs, Dictionnaire dico) {
-                Plateau board = new Plateau(tab);
-
-                int duration = 60000;
-                Jeu game = new Jeu(dico, board, joueurs.ToArray(), duration, Application.Current.Dispatcher);
-                return game;
-            }
-
-            static void updateBoardDisplay(Run[,] tableCells, Plateau plateau) {
-                for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++) {
-                        tableCells[i,j].Text = plateau.Tableau[i,j]?.toString() ?? " ";
-                    }
-                    
-                }
-            }
-
-            static Dictionnaire dicoInit() {
-                Dictionnaire dico = new Dictionnaire("FR", "mots.txt");
-                return dico;
-            }
+            return textBoxes;
         }
     }
 }

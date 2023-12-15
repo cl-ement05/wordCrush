@@ -12,6 +12,9 @@ public class Jeu {
     bool play;
     System.Timers.Timer playerTimer;
     System.Timers.Timer mainTimer;
+    int lapTime;
+    MainGameWindow mainWindow;
+    PopupWindow? popupWindow;
 
     public bool Play {
         get { return this.play; }
@@ -36,12 +39,14 @@ public class Jeu {
     /// <param name="dictionnaire">dico used in game</param>
     /// <param name="board">board used</param>
     /// <param name="joueurs">array of players</param>
-    public Jeu(Dictionnaire dictionnaire, Plateau board, Joueur[] joueurs, int duration, System.Windows.Threading.Dispatcher d) {
+    public Jeu(Dictionnaire dictionnaire, Plateau board, Joueur[] joueurs, int duration, int lapTime, System.Windows.Threading.Dispatcher d, MainGameWindow mainWindow) {
         this.dictionnaire = dictionnaire;
         this.board = board;
         this.joueurs = joueurs;
         this.currentPlayer = 0;
         this.play = true;
+        this.lapTime = lapTime;
+        this.mainWindow = mainWindow;
 
         System.Timers.Timer mainTimer = new System.Timers.Timer(duration);
         mainTimer.Elapsed += async (sender, e) => {
@@ -62,7 +67,7 @@ public class Jeu {
     /// </summary>
     public void playGame(Run playerBox, List<Run> playerScores, System.Windows.Threading.Dispatcher d) {
         if (play) {
-            playerTimer = new System.Timers.Timer(10000);
+            playerTimer = new System.Timers.Timer(lapTime);
             playerTimer.AutoReset = false;
             playerTimer.Elapsed += async (sender, e) => {
                 
@@ -113,6 +118,7 @@ public class Jeu {
 
     public void popUpMainThread(Run playerBox, List<Run> playerScores, System.Windows.Threading.Dispatcher d) {
         PopupWindow popupWindow = new PopupWindow(getCurrentPlayer().Nom);
+        this.popupWindow = popupWindow;
         popupWindow.Closing += (object? sender, CancelEventArgs eventArgs) => {
             currentPlayer++;
             playerTimer.Stop();
@@ -120,6 +126,7 @@ public class Jeu {
             playGame(playerBox, playerScores, d);
         };
         popupWindow.ShowDialog();
+        this.popupWindow = null;
     }
 
     public void gameOverMainThread() {
@@ -128,11 +135,10 @@ public class Jeu {
         mainTimer.Close();
         playerTimer.Stop();
         playerTimer.Close();
+        popupWindow?.Close();
         GameoverWindow gameoverWindow = new GameoverWindow(joueurs.ToList());
-        bool? result = gameoverWindow.ShowDialog();
-        if (result == false) {
-             Environment.Exit(0);
-        }
+        gameoverWindow.ShowDialog();
+        mainWindow.Close();
     }
 
 }
