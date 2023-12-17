@@ -111,29 +111,27 @@ namespace wordCrush
                 }
             };
             nbrPlayersBox.MinWidth = 20;
-            Button buttonNbrPlayers = new Button();
-            buttonNbrPlayers.Content = "Save";
-            buttonNbrPlayers.Padding = new Thickness(2);
-            buttonNbrPlayers.Click += (object sender, RoutedEventArgs e) => { 
-                nbPlayers = nbrPlayersBox.Text;
-                try {
-                    nbrPlayers = int.Parse(nbPlayers);
-                    if (nbrPlayers <= 0) throw new ArgumentException();
-                    status.Text = $"{nbrPlayers} players saved";
-                    status.Foreground = Brushes.Green;
-                    nameTextBoxes = playersNameBoxes(section, nbrPlayers);
-                    section.Blocks.Add(new Paragraph(new InlineUIContainer(sendPlayerNames)));
-                    buttonNbrPlayers.Visibility = Visibility.Hidden;
-                    nbrPlayersBox.IsEnabled = false;
-                } catch (Exception) {
-                    status.Text = "Please enter > 0 integer";
-                    status.Foreground = Brushes.Red;
+            nbrPlayersBox.KeyDown += (object sender, KeyEventArgs e) => { 
+                if (e.Key == Key.Enter) {
+                    nbPlayers = nbrPlayersBox.Text;
+                    try {
+                        nbrPlayers = int.Parse(nbPlayers);
+                        if (nbrPlayers <= 0) throw new ArgumentException();
+                        status.Text = $"{nbrPlayers} players saved";
+                        status.Foreground = Brushes.Green;
+                        nameTextBoxes = playersNameBoxes(section, nbrPlayers);
+                        section.Blocks.Add(new Paragraph(new InlineUIContainer(sendPlayerNames)));
+                        nbrPlayersBox.IsEnabled = false;
+                    } catch (Exception) {
+                        status.Text = "Please enter > 0 integer";
+                        status.Foreground = Brushes.Red;
+                    }
                 }
+
             };
             section.Blocks.Add(new Paragraph(new InlineUIContainer(status)));
             section.Blocks.Add(new Paragraph(new InlineUIContainer(nbrPlayersTitle)));
             section.Blocks.Add(new Paragraph(new InlineUIContainer(nbrPlayersBox)));
-            section.Blocks.Add(new Paragraph(new InlineUIContainer(buttonNbrPlayers)));
 
             close.Content = "Close";
             close.Padding = new Thickness(2);
