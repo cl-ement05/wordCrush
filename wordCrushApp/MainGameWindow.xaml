@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wordCrushApp"
-        Title="Word Crush" Height="600" Width="800">
+        Title="Word Crush" Height="700" Width="500">
         <FlowDocument x:Name="flowDoc" FontSize="18">
             
         </FlowDocument>

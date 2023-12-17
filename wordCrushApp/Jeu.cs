@@ -84,7 +84,8 @@ public class Jeu {
             playerBox.Text = $"Player {nbrCurrent+1} : {currentJoueur.Nom} your turn !";
 
             for (int i = 0; i < playerScores.Count(); i++) {
-                playerScores[i].Text = joueurs[i].Nom + " : " + joueurs[i].Score + " ; ";
+                if (i != playerScores.Count()) playerScores[i].Text = joueurs[i].Nom + " : " + joueurs[i].Score + " ; ";
+                else playerScores[i].Text = joueurs[i].Nom + " : " + joueurs[i].Score;
             }
 
         }

@@ -96,19 +96,25 @@ namespace wordCrush
                 }
 
                 textBox.KeyDown += (object sender, KeyEventArgs e) => {
-                    if (e.Key == Key.Enter) processInput(statusText, game, currentPlayerText, playerRuns, tableCells, textBox);
+                    if (e.Key == Key.Enter) {
+                        int result = game.tryProcessInput(textBox.Text);
+                        if(result != -1) {
+                            statusText.Text = "Great job !";
+                            statusText.Foreground = Brushes.Green;
+                            game.CurrentPlayer++;
+                            game.PlayerTimer.Stop();
+                            game.PlayerTimer.Close();
+                            game.playGame(currentPlayerText, playerRuns, Application.Current.Dispatcher);
+                            updateBoardDisplay(tableCells, game.Board);
+                            textBox.Clear();
+
+                        } else {
+                            statusText.Text = $"{textBox.Text} is not valid (already used, not in board, not in dictionary...) please input another word";
+                            statusText.Foreground = Brushes.Red;
+                            textBox.Select(0, textBox.Text.Length);
+                        }
+                    }
                 };
-                Paragraph buttonPara = new Paragraph();
-                Button button = new Button();
-                button.Content = "Send";
-                button.Padding = new Thickness(2);
-                button.Click += (object sender, RoutedEventArgs e) => {
-                    processInput(statusText, game, currentPlayerText, playerRuns, tableCells, textBox);
-                };
-                InlineUIContainer inlineUIContainer = new InlineUIContainer();
-                inlineUIContainer.Child = button;
-                buttonPara.TextAlignment = TextAlignment.Center;
-                buttonPara.Inlines.Add(inlineUIContainer);
 
                 
                 flowDoc.Blocks.Add(playerPara);
@@ -116,7 +122,6 @@ namespace wordCrush
                 flowDoc.Blocks.Add(paragraphScoreBoard);
                 flowDoc.Blocks.Add(table1);
                 flowDoc.Blocks.Add(inputGrid);
-                flowDoc.Blocks.Add(buttonPara);
                 flowDoc.Blocks.Add(statusPara);
 
                 this.Content = flowDoc;
@@ -127,7 +132,7 @@ namespace wordCrush
 
                 this.Closed += (object? sender, EventArgs e) => {
                     game.PlayerTimer.Stop();
-                    game.gameOverMainThread();
+                    if (game.Play) game.gameOverMainThread(); //if play is true => timer was not over so show game over screen
                 }; 
 
 
@@ -181,25 +186,6 @@ namespace wordCrush
             static Dictionnaire dicoInit() {
                 Dictionnaire dico = new Dictionnaire("FR", "mots.txt");
                 return dico;
-            }
-
-            void processInput(Run statusText, Jeu game, Run currentPlayerText, List<Run> playerRuns, Run[,] tableCells, TextBox textBox) {
-                int result = game.tryProcessInput(textBox.Text);
-                if(result != -1) {
-                    statusText.Text = "Great job !";
-                    statusText.Foreground = Brushes.Green;
-                    game.CurrentPlayer++;
-                    game.PlayerTimer.Stop();
-                    game.PlayerTimer.Close();
-                    game.playGame(currentPlayerText, playerRuns, Application.Current.Dispatcher);
-                    updateBoardDisplay(tableCells, game.Board);
-                    textBox.Clear();
-
-                } else {
-                    statusText.Text = $"{textBox.Text} is not valid (already used, not in board, not in dictionary...) please input another word";
-                    statusText.Foreground = Brushes.Red;
-                    textBox.Select(0, textBox.Text.Length);
-                }
             }
         }
     }

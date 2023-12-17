@@ -32,11 +32,14 @@ public class Joueur {
     public string toString()
     {
         string s="";
-        foreach (string element in motsTrouves)
-        {
-            s+=" "+element + ",";
+        for (int i =0; i < motsTrouves.Count(); i++) {
+            if (i != motsTrouves.Count()-1) {
+                s += motsTrouves[i] + ", ";
+            } else {
+                s += motsTrouves[i];
+            }
         }
-        return nom+", you scored "+score+" using words :"+s;
+        return nom+", you scored "+score+" using words : "+s;
     }
 
     /// <summary>
