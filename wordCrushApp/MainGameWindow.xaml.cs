@@ -86,7 +86,12 @@ namespace wordCrush
                 List<Run> playerRuns = new List<Run>();
                 Joueur[] gamePlayers = game.Joueurs;
                 foreach (Joueur joueur in gamePlayers) {
-                    Run run = new Run(joueur.Nom + " : 0 ; ");
+                    Run run;
+                    if (joueur != gamePlayers[^1]) {
+                        run = new Run(joueur.Nom + " : 0 ; ");
+                    } else {
+                        run = new Run(joueur.Nom + " : 0");
+                    }
                     playerRuns.Add(run);
                 }
                 Paragraph paragraphScores = new Paragraph();
