@@ -135,36 +135,6 @@ namespace wordCrush
                     if (game.Play) game.gameOverMainThread(); //if play is true => timer was not over so show game over screen
                 }; 
 
-
-                // Console.Write("Continue with file mode ? (y/N) ");
-                // cmd = Console.ReadLine()!;
-                // while (cmd == "y") {
-                //     Lettre[,] tab = new Lettre[0,0];
-                //     Dictionnaire dico = dicoInit();
-                //     while (tab.GetLength(0) == 0) {
-                //         Console.WriteLine("Saved board mode selected");
-                //         Console.Write("Board filename : ");
-                //         string filename = Console.ReadLine()!;
-                //         Console.Write("Do you want to provide letters score file ? (y/N) ");
-                //         string answer = Console.ReadLine()!;
-                //         string lettersScoreFile = "";
-                //         if (answer == "y") {
-                //             Console.Write("Letters score filename : ");
-                //             lettersScoreFile = Console.ReadLine()!;
-                //         }
-                //         tab = Plateau.fetchBoardFromFile(filename, lettersScoreFile);
-                //     }
-                //     Console.WriteLine("Board successfully imported ! \n");
-
-                //     Jeu game = gameInit(tab, joueurs, dico);
-                    
-                //     game.playGame();
-
-                //     Console.Write("Continue with random mode ? (y/N) ");
-                //     cmd = Console.ReadLine()!;
-                // }
-
-                // Console.WriteLine("Bye");
             }
 
             Jeu gameInit(Lettre[,] tab, List<Joueur> joueurs, Dictionnaire dico, int partyTime, int lapTime) {
