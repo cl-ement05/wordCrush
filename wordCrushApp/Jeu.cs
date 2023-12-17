@@ -39,6 +39,10 @@ public class Jeu {
     /// <param name="dictionnaire">dico used in game</param>
     /// <param name="board">board used</param>
     /// <param name="joueurs">array of players</param>
+    /// <param name="duration">game duration </param>
+    /// <param name="lapTime">lap time duration for one player </param>
+    /// <param name="d">main thread used for WPF UI manipulations; not using class attribute bc it causes errors</param>
+    /// <param name="mainGameWindow">Main game window for this game</param>
     public Jeu(Dictionnaire dictionnaire, Plateau board, Joueur[] joueurs, int duration, int lapTime, System.Windows.Threading.Dispatcher d, MainGameWindow mainWindow) {
         this.dictionnaire = dictionnaire;
         this.board = board;
@@ -65,6 +69,9 @@ public class Jeu {
     /// <summary>
     /// Main method for running game
     /// </summary>
+    /// <param name="playerBox">current player text box</param>
+    /// <param name="playerScores">list of runs for all players scores</param>
+    /// <param name="d">main thread used for WPF UI manipulations; not using class attribute bc it causes errors</param>
     public void playGame(Run playerBox, List<Run> playerScores, System.Windows.Threading.Dispatcher d) {
         if (play) {
             playerTimer = new System.Timers.Timer(lapTime);
@@ -92,6 +99,11 @@ public class Jeu {
 
     }
 
+    /// <summary>
+    /// try processing word typed by user
+    /// </summary>
+    /// <param name="word">word typed</param>
+    /// <returns>Returns score if processing was successful, otherwise -1</returns>
     public int tryProcessInput(string word) {
         Joueur currentJoueur = getCurrentPlayer();
         int toAdd = -1;
@@ -117,6 +129,12 @@ public class Jeu {
         return joueurs[nbrCurrent];
     }
 
+    /// <summary>
+    /// show popup window main method
+    /// </summary>
+    /// <param name="playerBox">current player text box</param>
+    /// <param name="playerScores">list of runs for all players scores</param>
+    /// <param name="d">main thread used for WPF UI manipulations; not using class attribute bc it causes errors</param>
     public void popUpMainThread(Run playerBox, List<Run> playerScores, System.Windows.Threading.Dispatcher d) {
         PopupWindow popupWindow = new PopupWindow(getCurrentPlayer().Nom);
         this.popupWindow = popupWindow;
@@ -130,6 +148,9 @@ public class Jeu {
         this.popupWindow = null;
     }
 
+    /// <summary>
+    /// main method for showing game over window
+    /// </summary>
     public void gameOverMainThread() {
         play = false;
         mainTimer.Stop();

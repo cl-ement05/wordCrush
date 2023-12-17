@@ -20,18 +20,23 @@ namespace wordCrush
     /// </summary>
     public partial class GameoverWindow : Window
     {
+        /// <summary>
+        /// Show game over window
+        /// </summary>
+        /// <param name="joueurs">list of all players</param>
         public GameoverWindow(List<Joueur> joueurs)
         {
             InitializeComponent();
             AppDomain.CurrentDomain.UnhandledException += (s,args)=>{
-       MessageBox.Show("Unhandled Exception: "+args.ExceptionObject);
-    };
+                MessageBox.Show("Unhandled Exception: "+args.ExceptionObject);
+            };
             FlowDocument flowDoc = new FlowDocument();
             Paragraph paragraphTitle = new Paragraph(new Run("GAME IS OVER"));
             paragraphTitle.FontSize = 20;
 
             Paragraph paragraphScore = new Paragraph(new Run("Scores : "));
             
+            #region processing winners
             Section sectionScores = new Section();
             List<Joueur> winners = new List<Joueur>() {joueurs[0]};
             sectionScores.Blocks.Add(new Paragraph(new Run(joueurs[0].toString())));
@@ -51,7 +56,9 @@ namespace wordCrush
                     paragraphWinner.Inlines.Add(new Run(joueur.Nom + " "));
                 }
             }
+            #endregion
             
+            #region UI work
             Paragraph ButtonPara = new Paragraph();
             Button closeButton = new Button();
             closeButton.Content = "Close";
@@ -62,9 +69,7 @@ namespace wordCrush
             InlineUIContainer inlineUIContainer = new InlineUIContainer();
             inlineUIContainer.Child = closeButton;
             ButtonPara.TextAlignment = TextAlignment.Center;
-            ButtonPara.Inlines.Add(inlineUIContainer);
-
-            
+            ButtonPara.Inlines.Add(inlineUIContainer);            
 
             flowDoc.Blocks.Add(paragraphTitle);
             flowDoc.Blocks.Add(paragraphScore);
@@ -72,6 +77,7 @@ namespace wordCrush
             flowDoc.Blocks.Add(paragraphWinner);
             flowDoc.Blocks.Add(ButtonPara);
             this.Content = flowDoc;
+            #endregion
         }
     }
 }

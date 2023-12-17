@@ -188,7 +188,7 @@ public class Plateau {
                 indexPath = searchWordRecursive(mot, 0, new List<int[]>(), lastLine, indexes[0]);
             } else {
                 int i = 0;
-                while (indexPath.Count == 0) {
+                while (indexPath.Count == 0 && i < indexes.Count()) {
                     indexPath = searchWordRecursive(mot, 0, new List<int[]>(), lastLine, indexes[i]);
                     i++;
                 }
@@ -242,7 +242,7 @@ public class Plateau {
         }
     }
 
-    //indexPath.Any(k => k.SequenceEqual(new int[2] {i,j}))) return new List<int[]>();
+    //indexPath.Any(k => k.SequenceEqual(new int[2] {i,j}))
 
     public static bool EstDejaPasse(List<int[]> L, int[] tab)
     {

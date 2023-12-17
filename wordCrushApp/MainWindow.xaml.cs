@@ -22,11 +22,12 @@ namespace wordCrush
     {
         public MainWindow()
         {
+            #region setting up UI vars
             InitializeComponent();
             FlowDocument flowDoc = new FlowDocument();
             int nbrPlayers = -1;
             string nbPlayers = "";
-            TextBox[] nameTextBoxes = new TextBox[2];
+            TextBox[] nameTextBoxes = new TextBox[2]; //dummy value => will be changed later
             List<Joueur> joueurs = new List<Joueur>();
             TextBlock status = new TextBlock();
             TextBlock timesTitle = new TextBlock();
@@ -48,7 +49,9 @@ namespace wordCrush
             Section section = new Section();
             Button close = new Button();
             section.Blocks.Add(new Paragraph(new InlineUIContainer(close)));
+            #endregion
 
+            #region players names logic
             Button sendPlayerNames = new Button();
             sendPlayerNames.Content = "Save player names";
             sendPlayerNames.Padding = new Thickness(2);
@@ -85,7 +88,9 @@ namespace wordCrush
                 }
 
             };
+            #endregion
 
+            #region setting durations
             int partyTimeVal = 0;
             int lapTimeVal = 0;
             startGame.Click += (object sender, RoutedEventArgs e) => {
@@ -102,7 +107,9 @@ namespace wordCrush
                     status.Foreground = Brushes.Red;
                 }
             };
+            #endregion
             
+            #region nbr of players
             TextBlock nbrPlayersTitle = new TextBlock(new Run("Number of players :"));
             TextBox nbrPlayersBox = new TextBox();
             nbrPlayersBox.KeyDown += (object sender, KeyEventArgs e) => {
@@ -129,6 +136,8 @@ namespace wordCrush
                 }
 
             };
+            #endregion
+
             section.Blocks.Add(new Paragraph(new InlineUIContainer(status)));
             section.Blocks.Add(new Paragraph(new InlineUIContainer(nbrPlayersTitle)));
             section.Blocks.Add(new Paragraph(new InlineUIContainer(nbrPlayersBox)));
@@ -146,6 +155,12 @@ namespace wordCrush
             nbrPlayersBox.Focus();
         }
 
+        /// <summary>
+        /// create text boxes to input all user names
+        /// </summary>
+        /// <param name="section">section UI</param>
+        /// <param name="nbrPlayers">number of players</param>
+        /// <returns>Returns an array of textboxes to get everyone's names</returns>
         public TextBox[] playersNameBoxes(Section section, int nbrPlayers) {
             TextBox[] textBoxes = new TextBox[nbrPlayers];
             for (int i = 0; i < nbrPlayers; i++) {
