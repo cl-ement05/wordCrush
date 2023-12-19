@@ -61,5 +61,19 @@ public class UnitTest
         Assert.False(joueur.Contient("plateau"));
     }
 
+    [Fact]
+    public void testSaveLoadBoard() {
+        Lettre?[,] tab = Plateau.createRandomBoard("Lettre.txt");
+        Plateau board = new Plateau(tab);
+        board.ToFile("board.csv");
+        Plateau board2 = new Plateau(Plateau.fetchBoardFromFile("board.csv"));
+        for (int i = 0; i < board.Tableau.GetLength(0); i++) {
+            for (int j = 0; j < board.Tableau.GetLength(1); j++) {
+                Assert.Equal(board.Tableau[i,j]?.Character, board2.Tableau[i,j]?.Character);
+                Assert.Equal(board.Tableau[i,j]?.Weight, board2.Tableau[i,j]?.Weight);
+            }
+        }
+    }
+
     
 }
