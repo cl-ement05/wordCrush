@@ -94,6 +94,13 @@ public class Program
         
     }
 
+    /// <summary>
+    /// pre-init routine to prepare parameters for Jeu constructor
+    /// </summary>
+    /// <param name="board">game board</param>
+    /// <param name="joueurs">list of players</param>
+    /// <param name="dico">dictionary used</param>
+    /// <returns>Returns new Jeu instance</returns>
     static Jeu gameInit(Plateau board, List<Joueur> joueurs, Dictionnaire dico) {
         Console.WriteLine();
 
@@ -135,6 +142,10 @@ public class Program
         return game;
     }
 
+    /// <summary>
+    /// dictionary init routine
+    /// </summary>
+    /// <returns>Returns newly created dico</returns>
     static Dictionnaire dicoInit() {
         Console.Write("Dictionary filename : ");
         string dicoFile = Console.ReadLine()!;
