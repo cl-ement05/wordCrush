@@ -1,7 +1,7 @@
 ﻿<Application x:Class="wordCrushApp.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:wordCrushApp"
+             xmlns:local="clr-namespace:wordCrush"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

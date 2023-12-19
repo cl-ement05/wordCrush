@@ -37,7 +37,7 @@ namespace wordCrush
             
             #region setting up main UI elements
             Dictionnaire dico = dicoInit();
-            Lettre[,] tab = new Lettre[0,0];
+            Lettre?[,] tab = new Lettre[0,0];
             if (randomMode) tab = Plateau.createRandomBoard("Lettre.txt", 8);
             else tab = Plateau.fetchBoardFromFile(savedBoardFile);
 
@@ -74,6 +74,17 @@ namespace wordCrush
 
             //setting up game
             Plateau board = new Plateau(tab);
+            Paragraph fileStatusPara = new Paragraph();
+            if (randomMode) {
+                if (board.ToFile("board.csv")) {
+                    fileStatusPara = new Paragraph(new Run("Board successfully exported to board.csv"));
+                    fileStatusPara.Foreground = Brushes.Green;
+                }
+                else {
+                    fileStatusPara = new Paragraph(new Run("Error while exporting board to board.csv"));
+                    fileStatusPara.Foreground = Brushes.Red;
+                }
+            }
             Jeu game = new Jeu(dico, board, joueurs.ToArray(), partyTime, lapTime, Application.Current.Dispatcher, this);
             updateBoardDisplay(tableCells, game.Board);
 
@@ -135,7 +146,7 @@ namespace wordCrush
                 }
             };
 
-            
+            if (randomMode) flowDoc.Blocks.Add(fileStatusPara);
             flowDoc.Blocks.Add(playerPara);
             flowDoc.Blocks.Add(paragraphScores);
             flowDoc.Blocks.Add(paragraphScoreBoard);
