@@ -25,7 +25,7 @@ public class Jeu {
         this.nextPlayerFlag = false;
         this.lapTime = lapTime;
         System.Timers.Timer mainTimer = new System.Timers.Timer(duration);
-        mainTimer.Elapsed += async (sender, e) => await end();
+        mainTimer.Elapsed += async (sender, e) => end();
         mainTimer.AutoReset = false;
         mainTimer.Start();
         this.mainTimer = mainTimer;
@@ -34,7 +34,7 @@ public class Jeu {
     /// <summary>
     /// Call when you want to end game instance
     /// </summary>
-    public async Task end() {
+    public void end(bool expectedEnd = false) {
         play = false;
         mainTimer.Stop();
         mainTimer.Close();
@@ -56,7 +56,10 @@ public class Jeu {
                 Console.Write(joueur.Nom + " ");
             }
         }
-        Console.WriteLine("Press ENTER to go to next game");
+        //occurs when game ends bc timer is over => considering it as unexpected end so console readline still
+        //waiting for an input
+        if (!expectedEnd) Console.WriteLine("Press ENTER to go to next game");
+        else Console.WriteLine();
     }
 
     /// <summary>
@@ -98,11 +101,16 @@ public class Jeu {
             playerTimer.Stop();
             playerTimer.Close();
             if (play && !nextPlayerFlag) {
-                Console.WriteLine($"{currentJoueur.Nom} you scored {toAdd} ! Total score : {currentJoueur.Score}");
-                Console.WriteLine($"{getCurrentPlayer().Nom} are you ready ? Press enter !");
-                Console.ReadLine();
+                if (!board.isEmpty()) {
+                    Console.WriteLine($"{currentJoueur.Nom} you scored {toAdd} ! Total score : {currentJoueur.Score}");
+                    Console.WriteLine($"{getCurrentPlayer().Nom} are you ready ? Press enter !");
+                    Console.ReadLine();
+                } else {
+                    Console.WriteLine($"{currentJoueur.Nom} you scored {toAdd} ! Total score : {currentJoueur.Score}");
+                    Console.WriteLine("Board is empty !");
+                    end(true);
+                }
             }
-
         }
 
     }

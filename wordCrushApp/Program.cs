@@ -27,7 +27,7 @@ public class Program
         Console.Write("Continue with file mode ? (y/N) ");
         string cmd = Console.ReadLine()!;
         while (cmd == "y") {
-            Lettre[,] tab = new Lettre[0,0];
+            Lettre?[,] tab = new Lettre[0,0];
             Dictionnaire dico = dicoInit();
             while (tab.GetLength(0) == 0) {
                 Console.WriteLine("Saved board mode selected");
@@ -43,12 +43,13 @@ public class Program
                 tab = Plateau.fetchBoardFromFile(filename, lettersScoreFile);
             }
             Console.WriteLine("Board successfully imported ! \n");
+            Plateau board = new Plateau(tab);
 
-            Jeu game = gameInit(tab, joueurs, dico);
+            Jeu game = gameInit(board, joueurs, dico);
             
             game.playGame();
 
-            Console.Write("Continue with random mode ? (y/N) ");
+            Console.Write("Continue with file mode ? (y/N) ");
             cmd = Console.ReadLine()!;
         }
         Console.WriteLine("Switching to random mode"); 
@@ -74,9 +75,14 @@ public class Program
                     tab = Plateau.createRandomBoard(filename, size);
                 }
             }
-            Console.WriteLine("Board successfully imported ! \n");
+            Plateau board = new Plateau(tab);
+            if (board.ToFile("board.csv")) {
+                Console.WriteLine("Board successfully created and exported to board.csv ! \n");
+            } else {
+                Console.WriteLine("Board successfully created but exported to board.csv failed ! \n");
+            }            
 
-            Jeu game = gameInit(tab, joueurs, dico);
+            Jeu game = gameInit(board, joueurs, dico);
             
             game.playGame();
 
@@ -88,27 +94,39 @@ public class Program
         
     }
 
-    static Jeu gameInit(Lettre[,] tab, List<Joueur> joueurs, Dictionnaire dico) {
-        Plateau board = new Plateau(tab);
+    static Jeu gameInit(Plateau board, List<Joueur> joueurs, Dictionnaire dico) {
         Console.WriteLine();
 
         Console.Write("Game duration (min) ? (defaults to 5min) ");
         string rep = Console.ReadLine()!;
-        int duration;
-        try {
-            duration = int.Parse(rep) * 60000;
-        } catch (Exception) {
-            duration = 300000;
-            Console.WriteLine("Using default value...");
+        int duration = -1;
+        bool durationOK = false;
+        while (!durationOK) {
+            try {
+                duration = int.Parse(rep) * 60000;
+                if (duration <= 0) throw new Exception();
+                durationOK = true;
+            } catch (Exception) {
+                Console.Write("Please input > 0 integer : ");
+                rep = Console.ReadLine()!;
+            }
         }
+
         Console.Write("Lap duration (sec) ? (defaults to 30sec) ");
         rep = Console.ReadLine()!;
-        int lapTime;
-        try {
-            lapTime = int.Parse(rep) * 1000;
-        } catch (Exception) {
-            lapTime = 30000;
-            Console.WriteLine("Using default value...");
+        int lapTime = -1;
+        bool lapOK = false;
+        while (!lapOK) {
+            try {
+                lapTime = int.Parse(rep) * 1000;
+                if (lapTime >= duration) {
+                    throw new Exception();
+                }
+                lapOK = true;
+            } catch (Exception) {
+                Console.Write("Please input > 0 and < duration integer : ");
+                rep = Console.ReadLine()!;
+            }  
         }
         Console.WriteLine("READY ?");
         Thread.Sleep(1000);

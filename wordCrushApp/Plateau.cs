@@ -39,7 +39,7 @@ public class Plateau {
     /// Native constructor for Plateau
     /// </summary>
     /// <param name="tableau">board representation containing UPPER CASE letter instances</param>
-    public Plateau(Lettre[,] tableau) {
+    public Plateau(Lettre?[,] tableau) {
         this.tableau = tableau;
     }
 
@@ -50,10 +50,10 @@ public class Plateau {
     /// <param name="lettersWeightFile">optional parameter to indicate weight ie score for letters; if not 
     /// specified -> default values are used</param>
     /// <returns>Returns a Letter board ready to be passed to constructor</returns>
-    public static Lettre[,] fetchBoardFromFile(string filename, string lettersWeightFile="") {
+    public static Lettre?[,] fetchBoardFromFile(string filename, string lettersWeightFile="") {
         csvInterface fileInterface = new csvInterface(filename, ';');
         string[,] tableChars = fileInterface.parseFromFile();
-        Lettre[,] board = new Lettre[0,0];
+        Lettre?[,] board = new Lettre[0,0];
         try {
             if (tableChars.GetLength(0) != 0) {
                 board = new Lettre[tableChars.GetLength(0),tableChars.GetLength(1)];
@@ -75,7 +75,8 @@ public class Plateau {
 
                 for (int i = 0; i < tableChars.GetLength(0); i++) {
                     for (int j = 0; j < tableChars.GetLength(1); j++) {
-                        board[i,j] = new Lettre(char.Parse(tableChars[i,j].ToUpper()), -1, lettersWeight[char.Parse(tableChars[i,j].ToUpper())]);
+                        if (tableChars[i,j].ToUpper() == "NONE") board[i,j] = null;
+                        else board[i,j] = new Lettre(char.Parse(tableChars[i,j].ToUpper()), -1, lettersWeight[char.Parse(tableChars[i,j].ToUpper())]);
                     }
                 }
             } else throw new ArgumentException();
@@ -289,6 +290,22 @@ public class Plateau {
             }
         }
         return score;
+    }
+
+    /// <summary>
+    /// Checks if board is empty
+    /// </summary>
+    /// <returns>Returns true if board only contains null elements</returns>
+    public bool isEmpty() {
+        bool empty = true;
+        for (int i = 0; i < tableau.GetLength(0); i++) {
+            for (int j = 0; j < tableau.GetLength(1); j++) {
+                if (tableau[i,j] != null) {
+                    empty = false;
+                }
+            }
+        }
+        return empty;
     }
 }
 }
