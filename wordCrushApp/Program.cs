@@ -78,7 +78,7 @@ public class Program
             Plateau board = new Plateau(tab);
             Console.Write("Filename to save generated board : ");
             string filenameExport = Console.ReadLine()!;
-            if (string.IsNullOrEmpty(filenameExport)) {
+            if (string.IsNullOrWhiteSpace(filenameExport)) {
                 filenameExport = "board.csv";
                 Console.WriteLine("Invalid input... Using default value 'board.csv'");
             }
