@@ -28,7 +28,7 @@ namespace wordCrush
         /// <param name="lapTime">lap time for one player</param>
         /// <param name="randomMode">random board mode; defaults to true</param>
         /// <param name="savedBoardFile">boad filename, use when randomMode is set to false</param>
-        public MainGameWindow(List<Joueur> joueurs, int partyTime, int lapTime, bool randomMode = true, string savedBoardFile="")
+        public MainGameWindow(List<Joueur> joueurs, int partyTime, int lapTime, bool randomMode = true, string savedBoardFile="", string exportBoardFile="board.csv")
         {
             InitializeComponent();
             AppDomain.CurrentDomain.UnhandledException += (s,args)=>{
@@ -76,12 +76,12 @@ namespace wordCrush
             Plateau board = new Plateau(tab);
             Paragraph fileStatusPara = new Paragraph();
             if (randomMode) {
-                if (board.ToFile("board.csv")) {
-                    fileStatusPara = new Paragraph(new Run("Board successfully exported to board.csv"));
+                if (board.ToFile(exportBoardFile)) {
+                    fileStatusPara = new Paragraph(new Run("Board successfully exported to " + exportBoardFile));
                     fileStatusPara.Foreground = Brushes.Green;
                 }
                 else {
-                    fileStatusPara = new Paragraph(new Run("Error while exporting board to board.csv"));
+                    fileStatusPara = new Paragraph(new Run("Error while exporting board to " + exportBoardFile));
                     fileStatusPara.Foreground = Brushes.Red;
                 }
             }

@@ -38,15 +38,22 @@ namespace wordCrush
             Button startGame = new Button();
             Button switchGame = new Button();
             TextBlock gameMode = new TextBlock();
+            Section section = new Section();
             bool randomMode = false;
+            TextBlock requestboardExportFilename = new TextBlock();
+            TextBox boardExportFilename = new TextBox();
             gameMode.Text = "Saved board mode";
             switchGame.Content = "Switch to random board mode";
             switchGame.Click += (object sender, RoutedEventArgs e) => {
                 gameMode.Text = "Random board mode";
                 switchGame.IsEnabled = false;
                 randomMode = true;
+                requestboardExportFilename.Text = "Filename to save generated board";
+                boardExportFilename.MinWidth = 100;
+                boardExportFilename.Text = "board.csv";
+                section.Blocks.Add(new Paragraph(new InlineUIContainer(requestboardExportFilename)));
+                section.Blocks.Add(new Paragraph(new InlineUIContainer(boardExportFilename)));
             };
-            Section section = new Section();
             Button close = new Button();
             section.Blocks.Add(new Paragraph(new InlineUIContainer(close)));
             #endregion
@@ -98,7 +105,7 @@ namespace wordCrush
                     partyTimeVal = int.Parse(partyTime.Text);
                     lapTimeVal = int.Parse(lapTime.Text);
                     if (partyTimeVal <= 0 || lapTimeVal <= 0 || partyTimeVal <= lapTimeVal) throw new ArgumentException();
-                    MainGameWindow mainGameWindow = new MainGameWindow(joueurs, partyTimeVal*1000, lapTimeVal*1000, randomMode, "plateau.csv");
+                    MainGameWindow mainGameWindow = new MainGameWindow(joueurs, partyTimeVal*1000, lapTimeVal*1000, randomMode, "plateau.csv", boardExportFilename.Text);
                     this.Visibility = Visibility.Hidden;
                     mainGameWindow.ShowDialog();
                     this.Visibility = Visibility.Visible;
