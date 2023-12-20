@@ -76,10 +76,16 @@ public class Program
                 }
             }
             Plateau board = new Plateau(tab);
-            if (board.ToFile("board.csv")) {
-                Console.WriteLine("Board successfully created and exported to board.csv ! \n");
+            Console.Write("Filename to save generated board : ");
+            string filenameExport = Console.ReadLine()!;
+            if (string.IsNullOrEmpty(filenameExport)) {
+                filenameExport = "board.csv";
+                Console.WriteLine("Invalid input... Using default value 'board.csv'");
+            }
+            if (board.ToFile(filenameExport)) {
+                Console.WriteLine($"Board successfully created and exported to {filenameExport} ! \n");
             } else {
-                Console.WriteLine("Board successfully created but exported to board.csv failed ! \n");
+                Console.WriteLine($"Board successfully created but exported to {filenameExport} failed ! \n");
             }            
 
             Jeu game = gameInit(board, joueurs, dico);
